@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>דשבורד מחקרי – בוסתנים קדומים בארץ ישראל</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<link rel="stylesheet" href="style.css?v=20260507" />
+</head>
+<body>
+<div id="app">
+<header>
+  <span id="hdrTitle">דשבורד מחקרי &mdash; בוסתנים קדומים בארץ ישראל <small style="font-size:0.7em;opacity:0.75">(v2)</small></span>
+  <div style="display:flex;gap:12px;align-items:center">
+    <button id="btnToggleLang" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.4);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:12px">English</button>
+    <span class="status" id="statusText">טוען נתונים...</span>
+  </div>
+</header>
+<main>
+<div id="mapWrap">
+  <div id="map"></div>
+  <div class="float" id="floatPanel">
+    <div class="float-header">
+      <h4 id="floatTitle">שכבות ומפה</h4>
+      <button id="btnFloatToggle" class="float-toggle" title="קפל / פתח" aria-expanded="true">▲</button>
+    </div>
+    <div id="floatBody">
+    <select id="basemapSel">
+      <optgroup label="מפות בסיס" id="bmGroupBase" data-label-he="מפות בסיס" data-label-en="Base Maps">
+        <option value="osm">OSM מודרני</option>
+        <option value="sat">לוויין (Esri)</option>
+      </optgroup>
+      <optgroup label="Palestine Open Maps">
+        <option value="pal20k">POM 1:20k (1940s)</option>
+        <option value="pal-1940s" selected>POM משולב (1940s)</option>
+        <option value="pal100k">POM 1:100k (1950s)</option>
+        <option value="pal250k">POM 1:250k (1946)</option>
+        <option value="pal63k">POM 1:63k PEF (1880)</option>
+        <option value="isr250k">ישראל 1:250k (1951)</option>
+      </optgroup>
+      <optgroup label="שילובים" id="bmGroupMix" data-label-he="שילובים" data-label-en="Blends">
+        <option value="osm+pal20k">OSM + POM 1:20k</option>
+        <option value="osm+pal-1940s">OSM + POM 1940s</option>
+        <option value="osm+pal100k">OSM + POM 1:100k</option>
+        <option value="osm+pal250k">OSM + POM 1:250k</option>
+        <option value="osm+pal63k">OSM + POM 1:63k PEF</option>
+        <option value="osm+isr250k">OSM + ישראל 1:250k</option>
+      </optgroup>
+    </select>
+    <!-- Layer toggles built dynamically -->
+    <div id="layerToggles"></div>
+    <div class="row">
+      <button id="btnShowAll">הצג הכל</button>
+      <button id="btnFit">זום לנתונים</button>
+    </div>
+    <input type="text" id="searchObj" placeholder="חפש שם / סוג..." style="margin-top:6px" />
+    <div class="row" style="margin-top:4px">
+      <button id="btnClearSel">נקה בחירה</button>
+      <button id="btnExportCSV">ייצוא CSV</button>
+    </div>
+    <div id="updateStatus" class="small mt8" style="color:var(--text2)"></div>
+    <div class="small mt8" id="coordsLabel">קואורדינטות WGS84</div>
+    </div><!-- /floatBody -->
+  </div><!-- /floatPanel -->
+</div><!-- /mapWrap -->
+
+<div id="side">
+  <div class="tabs" id="tabsBar">
+    <button class="tabbtn active" data-tab="overview" id="tabOverview">סקירה</button>
+    <button class="tabbtn" data-tab="districts" id="tabDistricts">נפות</button>
+    <button class="tabbtn" data-tab="species" id="tabSpecies">מינים</button>
+    <button class="tabbtn" data-tab="analytics" id="tabAnalytics">הדמיות</button>
+    <button class="tabbtn" data-tab="advanced" id="tabAdvanced">מתקדם</button>
+    <button class="tabbtn" data-tab="compare" id="tabCompare">השוואה</button>
+  </div>
+
+  <!-- === TAB: Overview === -->
+  <div class="panel tab active" id="overview">
+    <div class="kpis">
+      <div class="kpi"><div class="label" id="kLbl1">עצי פרי</div><div class="v" id="kFruitTrees"></div></div>
+      <div class="kpi"><div class="label" id="kLbl2">עצי סרק</div><div class="v" id="kCarobTrees"></div></div>
+      <div class="kpi"><div class="label" id="kLbl3">נפות</div><div class="v" id="kNafot"></div></div>
+      <div class="kpi"><div class="label" id="kLbl4">צמחיה</div><div class="v" id="kVegetation"></div></div>
+      <div class="kpi"><div class="label" id="kLbl5">כלים חקלאיים</div><div class="v" id="kAgTools"></div></div>
+      <div class="kpi"><div class="label" id="kLbl6">טרסות</div><div class="v" id="kTerraces"></div></div>
+      <div class="kpi"><div class="label" id="kLbl7">ממוצע גובה (עצי פרי)</div><div class="v" id="kAvgH"></div></div>
+      <div class="kpi"><div class="label" id="kLbl8">ממוצע היקף (עצי פרי)</div><div class="v" id="kAvgG"></div></div>
+      <div class="kpi"><div class="label" id="kLbl9">סוגי עצי פרי</div><div class="v" id="kFruitTypes"></div></div>
+    </div>
+    <div id="selectionDetail"></div>
+    <div id="chartOverviewBar" class="chart"></div>
+    <div id="chartOverviewPie" class="chart"></div>
+  </div>
+
+  <!-- === TAB: Districts (Nafot) === -->
+  <div class="panel tab" id="districts">
+    <div class="small mb8" id="districtsIntro">ניתוח אובייקטים לפי נפות ישראל &mdash; לחצו על שורה למיקוד<br>הנפות מוצגות גם על המפה ֛מותל) בצבע תכלת).</div>
+    <div id="districtList" style="overflow-y:auto;max-height:280px"></div>
+    <div class="small mt8" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <span id="districtsAddHint">הוספת פוליגון:</span>
+      <a href="#" id="btnAddDistrictPolygon">לחצו כאן לציור אזור חדש</a>
+      <button id="btnExportDistrictsJSON" class="btn-inline-mini">שמור JSON</button>
+      <button id="btnImportDistrictsJSON" class="btn-inline-mini">טען JSON</button>
+      <input type="file" id="districtsJsonFile" accept="application/json,.json" style="display:none" />
+    </div>
+    <div id="chartDistrictStack" class="chartTall"></div>
+    <div id="chartDistrictHeatmap" class="chartTall"></div>
+    <div id="chartDistrictPie" class="chart"></div>
+    <!-- District detail on row click -->
+    <div id="districtDetail" style="display:none;margin-top:16px;border-top:2px solid var(--primary);padding-top:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <h5 id="districtDetailTitle" style="color:var(--primary);margin:0"></h5>
+        <button id="districtDetailClose" style="font-size:12px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:#fff">✕</button>
+      </div>
+      <div class="grp-btn-bar">
+        <button class="grp-btn active" data-grp="" id="distGrpAll">הכל</button>
+        <button class="grp-btn" data-grp="fruit" id="distGrpFruit">עצי פרי</button>
+        <button class="grp-btn" data-grp="carob" id="distGrpCarob">עצי סרק</button>
+        <button class="grp-btn" data-grp="vegetation" id="distGrpVegetation">צמחיה</button>
+      </div>
+      <div class="small mb8" id="districtDrillHint">לחצו על שם מין לניתוח מפורט</div>
+      <div id="districtSpeciesTable" style="overflow-x:auto;overflow-y:auto;max-height:240px"></div>
+      <div id="chartDistrictSpeciesBar" class="chartTall"></div>
+      <div id="chartDistrictSpeciesBox" class="chartTall"></div>
+      <!-- Per-species drilldown within district -->
+      <div id="districtSpeciesDetailPanel" style="display:none;margin-top:12px;border-top:1px solid var(--border);padding-top:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <h6 id="districtSpeciesDetailTitle" style="color:var(--primary);margin:0;font-size:13px"></h6>
+          <button id="districtSpeciesDetailClose" style="font-size:12px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:#fff">✕</button>
+        </div>
+        <div id="chartDistrictSpeciesHist" class="chart"></div>
+        <div id="chartDistrictSpeciesGirth" class="chart"></div>
+        <div id="chartDistrictSpeciesStatus" class="chart"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- === TAB: Species (מינים) === -->
+  <div class="panel tab" id="species">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+      <select id="speciesFilterLayer" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px">
+        <option value="" id="speciesGroupAll">כל הקבוצות</option>
+        <option value="fruit" id="speciesGroupFruit">עצי פרי</option>
+        <option value="carob" id="speciesGroupCarob">עצי סרק</option>
+        <option value="vegetation" id="speciesGroupVegetation">צמחיה</option>
+      </select>
+      <input type="text" id="speciesSearch" placeholder="חפש מין..." style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px" />
+    </div>
+    <div class="small mb8" id="speciesCount"></div>
+    <div id="speciesTable" style="overflow-x:auto;overflow-y:auto;max-height:280px"></div>
+    <button id="btnOpenSpeciesCmp" style="padding:6px 14px;border:1px solid var(--primary);border-radius:8px;background:#fff;color:var(--primary);cursor:pointer;font-size:12px;font-weight:600;margin-bottom:8px">השוואת מינים ▾</button>
+    <!-- Species comparison panel -->
+    <div id="speciesCmpPanel" style="display:none;background:#f8fafc;border:1px solid var(--primary);border-radius:10px;padding:14px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <h5 style="margin:0;color:var(--primary);font-size:13px" id="speciesCmpTitle">השוואת מינים</h5>
+        <button id="btnSpeciesCmpClose" style="font-size:12px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:#fff">✕</button>
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:8px">
+        <div style="flex:1"><div class="small" style="margin-bottom:3px" id="speciesCmpLblA">מין א׳</div><select id="speciesCmpA" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:8px;font-size:12px"></select></div>
+        <div style="flex:1"><div class="small" style="margin-bottom:3px" id="speciesCmpLblB">מין ב׳</div><select id="speciesCmpB" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:8px;font-size:12px"></select></div>
+        <button id="btnRunSpeciesCmp" style="padding:7px 16px;background:var(--primary);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:12px">השווה</button>
+      </div>
+      <div id="speciesCmpResult"></div>
+      <div id="chartSpeciesCmpBox" class="chartTall"></div>
+      <div id="chartSpeciesCmpBar" class="chart"></div>
+    </div>
+    <div id="speciesDetail" style="display:none;margin-top:12px;border-top:2px solid var(--border);padding-top:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h5 id="speciesDetailTitle" style="color:var(--primary);margin:0;font-size:14px"></h5>
+        <button id="speciesDetailClose" style="font-size:12px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:#fff">✕</button>
+      </div>
+      <div id="speciesDetailStats"></div>
+      <div id="chartSpeciesHeightHist" class="chart"></div>
+      <div id="chartSpeciesGirthHist" class="chart"></div>
+      <div id="chartSpeciesStatus" class="chart"></div>
+      <div id="chartSpeciesNafot" class="chartTall"></div>
+      <div id="chartSpeciesBoxNafot" class="chartTall"></div>
+    </div>
+  </div>
+
+  <!-- === TAB: Analytics === -->
+  <div class="panel tab" id="analytics">
+    <div class="analytics-filter-bar">
+      <div><label id="analyticsLblGroup">תחום</label>
+        <select id="analyticsFilterGroup">
+          <option value="" id="analyticsGroupAll">כל התחומים</option>
+          <option value="fruit" id="analyticsGroupFruit">עצי פרי</option>
+          <option value="carob" id="analyticsGroupCarob">עצי סרק</option>
+          <option value="vegetation" id="analyticsGroupVegetation">צמחיה</option>
+        </select>
+      </div>
+      <div style="flex:2"><label id="analyticsLblSpecies">מין ספציפי (השלמה אוטומטית)</label>
+        <input type="text" id="analyticsFilterSpecies" list="analyticsSpeciesList" placeholder="הקלד מין..." style="width:100%;box-sizing:border-box" />
+        <datalist id="analyticsSpeciesList"></datalist>
+      </div>
+      <div style="flex:2"><label id="analyticsLblDistricts">נפות (Ctrl להרבה)</label>
+        <select id="analyticsFilterNafa" multiple size="4" style="width:100%"></select>
+      </div>
+      <button id="btnAnalyticsApply" class="btn-apply">הצג</button>
+      <button id="btnAnalyticsReset" class="btn-reset">אפס</button>
+    </div>
+    <div id="analyticsFilterStatus"></div>
+    <div id="chartTypeDist" class="chartTall"></div>
+    <div id="chartHeightDist" class="chart"></div>
+    <div id="chartGirthDist" class="chart"></div>
+    <div id="chartHeightBox" class="chartTall"></div>
+    <div id="chartStatusDist" class="chart"></div>
+    <div id="chartHeatLayer" class="chartTall"></div>
+    <div id="chartScatterHG" class="chartTall"></div>
+    <div id="chartViolinH" class="chartTall"></div>
+  </div>
+
+  <!-- === TAB: Advanced === -->
+  <div class="panel tab" id="advanced">
+    <div class="small mb8" id="advancedIntro">ניתוח מתקדם: CDF, Lorenz, מתאמים, חלוקה מרחבית</div>
+    <div id="chartCDF" class="chartTall"></div>
+    <div id="chartLorenz" class="chartTall"></div>
+    <div id="chartBustanProfile" class="chartWide"></div>
+    <div id="chartCorrelation" class="chartTall"></div>
+    <div id="chartTypeByBustan" class="chartTall"></div>
+    <div id="chartSizeClass" class="chartTall"></div>
+    <div id="chartTreemapTypes" class="chartTall"></div>
+    <div id="chartRadarStatus" class="chartTall"></div>
+  </div>
+
+  <!-- === TAB: Compare === -->
+  <div class="panel tab" id="compare">
+    <div class="small mb8" id="compareIntro">בחרו שתי יחידות להשוואה: סוג עץ, שכבה, בוסתן מסוים</div>
+    <div class="cmp-row">
+      <div class="cmp-side">
+        <label class="small" id="labelSideA">צד א׳ – סוג</label>
+        <select id="cmpTypeA">
+          <option value="treetype" id="cmpTypeATree">סוג עץ</option>
+          <option value="layer" id="cmpTypeALayer">שכבה</option>
+          <option value="district" id="cmpTypeADistrict">נפה</option>
+        </select>
+        <select id="cmpSelA"></select>
+        <label class="small" id="cmpSpacesLabelA">מרחבים (אופציונלי)</label>
+        <select id="cmpSpacesA" multiple size="4"></select>
+      </div>
+      <div class="cmp-side">
+        <label class="small" id="labelSideB">צד ב׳ – סוג</label>
+        <select id="cmpTypeB">
+          <option value="treetype" id="cmpTypeBTree">סוג עץ</option>
+          <option value="layer" id="cmpTypeBLayer">שכבה</option>
+          <option value="district" id="cmpTypeBDistrict">נפה</option>
+        </select>
+        <select id="cmpSelB"></select>
+        <label class="small" id="cmpSpacesLabelB">מרחבים (אופציונלי)</label>
+        <select id="cmpSpacesB" multiple size="4"></select>
+      </div>
+    </div>
+    <button id="btnCompare" class="mt8">השווה</button>
+    <div id="cmpResult" class="mt8"></div>
+    <div id="cmpChartBar" class="chartTall"></div>
+    <div id="cmpChartRadar" class="chartTall"></div>
+    <div id="cmpChartBox" class="chartTall"></div>
+    <div id="cmpChartHist" class="chartTall"></div>
+    <div id="cmpChartScatter" class="chartTall"></div>
+  </div>
+</div>
+</main>
+</div>
+
+<!-- Object Detail Modal -->
+<div id="objModal" style="display:none;position:fixed;inset:0;z-index:3000;background:rgba(15,23,42,.6)">
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-width:560px;width:92%;max-height:85vh;overflow-y:auto;padding:20px">
+    <button id="objModalClose" style="position:absolute;top:10px;left:12px;background:#e2e8f0;border:none;border-radius:8px;width:32px;height:32px;font-size:20px;cursor:pointer;line-height:1">&times;</button>
+    <div id="objModalContent"></div>
+    <div id="objModalImages"></div>
+  </div>
+</div>
+
+<!-- Photo Lightbox -->
+<div id="photoPopup" class="popup-overlay">
+  <img id="photoPopupImg" src="" alt="" style="max-width:90vw;max-height:90vh;border-radius:12px;box-shadow:0 25px 70px rgba(0,0,0,.4);z-index:3001">
+</div>
+
+<script src="app_v1.js?v=20260507"></script>
+</body>
+</html>

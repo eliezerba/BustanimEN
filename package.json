@@ -1,0 +1,23 @@
+{
+  "name": "bustanim-dashboard",
+  "version": "1.0.0",
+  "description": "Ancient Orchards Research Dashboard for Bustanim in Israel",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "server": "node server.js"
+  },
+  "keywords": [
+    "gis",
+    "ancient-orchards",
+    "israel",
+    "research",
+    "arcgis"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}
