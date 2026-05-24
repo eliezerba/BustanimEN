@@ -17,7 +17,7 @@ const TR = {
     english:'English',
     hebrew:'עברית',
     fruit_trees:'עצי פרי',
-    carob_trees:'עצי סרק',
+    carob_trees:'רשומות מקור אופציונליות',
     boundaries:'בוסתנים (תיחום)',
     vegetation:'צמחיה',
     ag_tools:'כלים חקלאיים',
@@ -130,11 +130,11 @@ const TR = {
     layers_map:'Layers & Map',
     english:'English',
     hebrew:'Hebrew',
-    fruit_trees:'Fruit Trees',
-    carob_trees:'Non-Fruit Trees',
+    fruit_trees:'Orchard Fruit Trees',
+    carob_trees:'Non-Orchard / Wild Tree Records',
     boundaries:'Orchards (Boundary)',
-    vegetation:'Vegetation',
-    ag_tools:'Agricultural Tools',
+    vegetation:'Non-Orchard Trees',
+    ag_tools:'Agricultural Installations',
     terraces:'Terraces',
     nafot:'Districts',
     nafot_districts:'Districts (Nafot)',
@@ -145,7 +145,7 @@ const TR = {
     export_csv:'Export CSV',
     search:'Search name / type...',
     overview:'Overview',
-    bustans:'Bustans',
+    bustans:'Historical Orchard',
     districts:'Districts',
     objects:'Objects',
     analytics:'Analytics',
@@ -166,18 +166,18 @@ const TR = {
     count:'Count',
     title:'Research Dashboard — Ancient Orchards in the Land of Israel',
     coords:'WGS84 Coordinates',
-    tab_species:'Species',
-    districts_intro:'Object analysis by Israeli districts — click a row to focus. Districts are also shown on the map in cyan.',
+    tab_species:'Orchard Fruit Trees',
+    districts_intro:'Object counts by modern Israeli administrative districts. Click a row to focus the map. This view is an administrative spatial summary, not a historical or ecological regional classification.',
     grp_all:'All',
-    click_species_detail:'Click a species name for detailed analysis',
+    click_species_detail:'Click an orchard fruit tree name for detailed analysis',
     all_groups:'All groups',
-    species_compare_toggle_open:'Species Comparison ▾',
-    species_compare_toggle_close:'Hide Species Comparison ▴',
-    species_compare:'Species Comparison',
-    species_a:'Species A',
-    species_b:'Species B',
+    species_compare_toggle_open:'Orchard Fruit Tree Comparison ▾',
+    species_compare_toggle_close:'Hide Orchard Fruit Tree Comparison ▴',
+    species_compare:'Orchard Fruit Tree Comparison',
+    species_a:'Orchard Fruit Tree A',
+    species_b:'Orchard Fruit Tree B',
     filter_group:'Group',
-    filter_species_ac:'Specific Species (Autocomplete)',
+    filter_species_ac:'Specific Orchard Fruit Tree (Autocomplete)',
     filter_districts:'Districts (Ctrl for multi-select)',
     all_domains:'All groups',
     apply:'Apply',
@@ -207,13 +207,13 @@ const TR = {
     height_box:'Height Distribution – Box',
     height_hist:'Height Histogram',
     height_vs_girth:'Height vs. Girth',
-    choose_two_species:'Choose two different species',
+    choose_two_species:'Choose two different orchard fruit trees',
     dominant_status:'Dominant Status',
     species_group:'Group',
     species_metrics_compare:'Metrics Comparison',
-    avg_height_fruit:'Average Height (Fruit Trees)',
-    avg_girth_fruit:'Average Girth (Fruit Trees)',
-    fruit_type_count:'Fruit Tree Types',
+    avg_height_fruit:'Average Height (Orchard Fruit Trees)',
+    avg_girth_fruit:'Average Girth (Orchard Fruit Trees)',
+    fruit_type_count:'Orchard Fruit Tree Types',
     draw_polygon_name:'Enter a name for the new polygon:',
     draw_polygon_invalid:'Invalid name. Polygon was not saved.',
     draw_polygon_exists:'A district with this name already exists. Choose another name.',
@@ -229,8 +229,8 @@ const TR = {
     draw_polygon_export_done:'JSON file was saved.',
     draw_polygon_import_done:'JSON file was loaded successfully.',
     draw_polygon_import_bad:'Invalid JSON file.',
-    bustans_intro:'List of bustans — click a bustan to view its details and map',
-    bustans_search:'Search bustan...',
+    bustans_intro:'List of Historical Orchard records — click a record to view details on the map',
+    bustans_search:'Search historical orchard...',
     bustans_zones:'Zones',
     bustans_area:'Area (Dunam)',
     bustans_type:'Type',
@@ -240,7 +240,10 @@ const TR = {
   }
 };
 function t(k){ return TR[LANG][k] || k; }
-function lh(he,en){ return LANG==='he' ? he : en; }
+function lh(he,en){ return en; }
+
+const NO_DATA_LABEL = 'No data';
+const NOT_AVAILABLE_LABEL = 'Not available';
 
 /* ── API Config ─────────────────────────────────────────── */
 const API_BASE = 'https://services5.arcgis.com/eJYUV73IZAY87Jwy/arcgis/rest/services/%D7%91%D7%95%D7%A1%D7%AA%D7%A0%D7%99%D7%9D_2_%D7%AA%D7%A6%D7%95%D7%92%D7%94/FeatureServer';
@@ -248,11 +251,11 @@ const BUSTANIM_LAYER_API = 'https://services5.arcgis.com/eJYUV73IZAY87Jwy/arcgis
 
 const LAYER_META = {
   boundaries: { id:0, name_he:'בוסתנים (תיחום)', name_en:'Orchards',          color:'#2563eb', geom:'polygon', typeField:'Name',   hidden:true },
-  fruit:      { id:1, name_he:'עצי פרי',          name_en:'Fruit Trees',       color:'#16a34a', geom:'point',   typeField:'tree_type' },
-  carob:      { id:2, name_he:'עצי סרק',           name_en:'Non-Fruit Trees',   color:'#8b6f47', geom:'point',   typeField:'Tree_type' },
-  vegetation: { id:3, name_he:'צמחיה',             name_en:'Vegetation',        color:'#65a30d', geom:'point',   typeField:'tree_type' },
-  agtools:    { id:4, name_he:'כלים חקלאיים',      name_en:'Agr. Tools',        color:'#ea580c', geom:'point',   typeField:'Stationary_agricultural_facilit' },
-  terraces:   { id:5, name_he:'טרסות',             name_en:'Terraces',          color:'#7c3aed', geom:'line',    typeField:null },
+  fruit:      { id:1, name_he:'עצי פרי',          name_en:'Orchard Fruit Trees', color:'#16a34a', geom:'point',   typeField:'tree_type', displayGroup:'orchardFruitTrees' },
+  carob:      { id:2, name_he:'עצי סרק',           name_en:'Non-Orchard / Wild Tree Records',   color:'#8b6f47', geom:'point',   typeField:'Tree_type', optional:true, defaultVisible:false, includeInDefaultAnalytics:false, collapsedByDefault:true, displayGroup:'optionalSourceLayers' },
+  vegetation: { id:3, name_he:'צמחיה',             name_en:'Non-Orchard Trees', color:'#65a30d', geom:'point',   typeField:'tree_type', displayGroup:'nonOrchardTrees' },
+  agtools:    { id:4, name_he:'כלים חקלאיים',      name_en:'Agricultural Installations', color:'#ea580c', geom:'point',   typeField:'Stationary_agricultural_facilit', displayGroup:'agriculturalInstallations' },
+  terraces:   { id:5, name_he:'טרסות',             name_en:'Terraces',          color:'#7c3aed', geom:'line',    typeField:null, displayGroup:'agriculturalInstallations' },
 };
 /* Visible layer keys – excludes layers with hidden:true */
 const LAYER_KEYS = Object.keys(LAYER_META).filter(lk=>!LAYER_META[lk].hidden);
@@ -304,10 +307,17 @@ let mapProjection = {
 };
 let analyticsRendered=false;
 let advancedRendered=false;
+let displayGroupVis={
+  orchardFruitTrees:true,
+  nonOrchardTrees:false,
+  agriculturalInstallations:false,
+  optionalSourceLayers:false,
+};
+const SIDEBAR_WIDTH_STORAGE_KEY='bustanim_sidebar_width_v1';
 
 /* ── Statistics helpers ─────────────────────────────────── */
-const fmt  = v => (v==null||isNaN(v)) ? '–' : (+v).toLocaleString('he-IL',{maximumFractionDigits:1});
-const fmtI = v => (v==null||isNaN(v)) ? '–' : Math.round(+v).toLocaleString('he-IL');
+const fmt  = v => (v==null||isNaN(v)) ? NO_DATA_LABEL : (+v).toLocaleString('en-US',{maximumFractionDigits:1});
+const fmtI = v => (v==null||isNaN(v)) ? '0' : Math.round(+v).toLocaleString('en-US');
 const STATUS_I18N = {
   'טוב': { he:'טוב', en:'Good' },
   'כשיר': { he:'כשיר', en:'Viable' },
@@ -350,16 +360,31 @@ const TREE_TYPE_EN = {
   /* Common fallbacks */
   'אחר':'Other',          'ללא שם':'Unnamed',     'לא ידוע':'Unknown',
 };
+function normalizeTreeTypeKey(value){
+  return String(value||'')
+    .trim()
+    .replace(/_/g,' ')
+    .replace(/\s*\+\s*/g,'+')
+    .replace(/\s+/g,' ')
+    .toLowerCase();
+}
+const TREE_TYPE_EN_BY_NORM = Object.fromEntries(
+  Object.entries(TREE_TYPE_EN).map(([k,v])=>[normalizeTreeTypeKey(k),v])
+);
 const AGTOOLS_EN = {
-  'בית בד':'Oil Press',
-  'גת':'Winepress',
-  'כבשן אחר':'Other Kiln',
+  'גת':'Wine Press',
+  'בית בד':'Olive Press',
+  'מחסן-אסם-ממגורה':'Storage',
+  'מחסן':'Storage',
+  'אסם':'Storage',
+  'ממגורה':'Storage',
+  'טרסה':'Terraces',
+  'טרסות':'Terraces',
   'כבשן סיד':'Lime Kiln',
-  'מחסן-אסם-ממגורה':'Granary / Storage',
+  'כבשן אחר':'Other Cultural Landscape Features',
   'ספלול':'Rock-cut Trough',
   'קולומבריום':'Columbarium',
   'תחנת קמח':'Flour Mill',
-  'אחר':'Other',
 };
 const NAFA_EN = {
   'ירושלים':'Jerusalem',
@@ -405,20 +430,52 @@ const BUSTAN_DESC_EN  = {'C.':'Citrus','O.':'Orchard','Ol.':'Olive','V.':'Vine',
 const BUSTAN_DESC_HE  = {'C.':'הדר','O.':'פרדס','Ol.':'זית','V.':'גפן','Other':'אחר'};
 const BUSTAN_DESC_COLOR = {'C.':'#f59e0b','O.':'#16a34a','Ol.':'#78350f','V.':'#7c3aed','Other':'#6b7280'};
 function bustanDescLabel(desc){
-  if(!desc)return '–';
+  if(!desc)return NOT_AVAILABLE_LABEL;
   return LANG==='he' ? (BUSTAN_DESC_HE[desc]||desc) : (BUSTAN_DESC_EN[desc]||desc);
+}
+
+function displayAgInstallationType(value){
+  const raw=String(value ?? '').trim();
+  if(!raw)return 'Other Cultural Landscape Features';
+  const norm=raw.toLowerCase();
+  if(raw==='ללא שם' || raw==='אחר' || raw==='Other' || norm==='unknown' || norm==='undefined' || norm==='null'){
+    return 'Other Cultural Landscape Features';
+  }
+  return AGTOOLS_EN[raw] || 'Other Cultural Landscape Features';
+}
+
+function getLayerTypeValue(lk, feature){
+  const tf=LAYER_META[lk]?.typeField;
+  if(!tf)return '';
+  return String(feature?.properties?.[tf]||'').trim();
+}
+
+function isPricklyPearValue(rawValue){
+  const raw=String(rawValue||'').trim();
+  const norm=normalizeTreeTypeKey(raw).replace(/\+/g,' ');
+  return raw==='צבר' || norm==='prickly pear' || norm==='pricklypear';
+}
+
+function getDisplayGroupForFeature(layerKey, feature){
+  if(layerKey==='fruit'){
+    return isPricklyPearValue(getLayerTypeValue(layerKey,feature)) ? 'nonOrchardTrees' : 'orchardFruitTrees';
+  }
+  if(layerKey==='vegetation')return 'nonOrchardTrees';
+  if(layerKey==='agtools' || layerKey==='terraces')return 'agriculturalInstallations';
+  if(layerKey==='carob')return 'optionalSourceLayers';
+  return layerKey;
 }
 
 /* Translate a data value based on layer key and current language */
 function typeValueLabel(val, lk) {
-  if (!val) return '–';
+  if (!val) return NOT_AVAILABLE_LABEL;
   if (LANG === 'he') return val;
-  if (lk === 'agtools') return AGTOOLS_EN[val] || val;
-  return TREE_TYPE_EN[val] || val;
+  if (lk === 'agtools') return displayAgInstallationType(val);
+  return TREE_TYPE_EN[val] || TREE_TYPE_EN_BY_NORM[normalizeTreeTypeKey(val)] || String(val);
 }
 /* Translate / transliterate a Nafa (district) name */
 function nafaLabel(naf) {
-  if (!naf) return '–';
+  if (!naf) return NOT_AVAILABLE_LABEL;
   if (LANG === 'he') return naf;
   return nafaEnByHe[naf] || NAFA_EN[naf] || naf;
 }
@@ -438,8 +495,30 @@ function stddev(arr){
 }
 function arrMin(arr){const a=arr.filter(x=>x!=null&&!isNaN(x));return a.length?Math.min(...a):null;}
 function arrMax(arr){const a=arr.filter(x=>x!=null&&!isNaN(x));return a.length?Math.max(...a):null;}
-function dateStr(ms){if(!ms)return '–';return new Date(ms).toLocaleDateString('he-IL');}
+function dateStr(ms){if(!ms)return NOT_AVAILABLE_LABEL;return new Date(ms).toLocaleDateString('en-US');}
 function fieldArr(lk,field){return(allFeats[lk]||[]).map(f=>f.properties[field]).filter(v=>v!=null&&!isNaN(v)).map(Number);}
+
+function normalizedLabel(s){
+  return String(s||'').trim().toLowerCase();
+}
+
+function resolveSpeciesInput(input, lkDefs){
+  const raw = String(input||'').trim();
+  if(!raw)return '';
+  const norm = normalizedLabel(raw);
+  const candidates = new Set();
+  (lkDefs||[]).forEach(({lk,field})=>{
+    (allFeats[lk]||[]).forEach(f=>{
+      const v = String(f.properties[field]||'').trim();
+      if(v)candidates.add(v);
+    });
+  });
+  const list=[...candidates];
+  const exactRaw=list.find(v=>normalizedLabel(v)===norm);
+  if(exactRaw)return exactRaw;
+  const exactEn=list.find(v=>normalizedLabel(typeValueLabel(v,'fruit'))===norm || normalizedLabel(typeValueLabel(v,'carob'))===norm || normalizedLabel(typeValueLabel(v,'vegetation'))===norm);
+  return exactEn || '';
+}
 
 /* Feature display name */
 function featLabel(feat,lk){
@@ -464,7 +543,14 @@ function visibleFeats(lk){
   const tf=LAYER_META[lk].typeField;
   return(allFeats[lk]||[]).filter(f=>{
     if(!layerVis[lk])return false;
-    if(tf){const v=f.properties[tf]||'ללא שם';if(typeVis[lk]&&typeVis[lk][v]===false)return false;}
+    const dg=getDisplayGroupForFeature(lk,f);
+    if(!displayGroupVis[dg])return false;
+    if(tf){
+      const v=f.properties[tf]||'ללא שם';
+      if(typeVis[lk]&&typeVis[lk][v]===false)return false;
+    } else if(typeVis[lk]&&typeVis[lk].__all__===false){
+      return false;
+    }
     return true;
   });
 }
@@ -792,7 +878,7 @@ function initNafotDrawTools(){
     }catch(e){console.warn('Failed to add stored custom nafa layer:',e);}
   });
   nafotDrawControl=new L.Control.Draw({
-    position:'topleft',
+    position:'bottomright',
     draw:{
       polygon:{allowIntersection:false,showArea:true,shapeOptions:{color:'#e11d48',weight:2.5,fillColor:'#f43f5e',fillOpacity:0.14}},
       polyline:false,
@@ -1005,10 +1091,10 @@ function renderNafotOnMap(visible){
 /* ── Map init ───────────────────────────────────────────── */
 function initMap(){
   map=L.map('map',{preferCanvas:true,zoomControl:false}).setView([31.9,34.85],9);
-  L.control.zoom({position:'bottomright'}).addTo(map);
+  L.control.zoom({position:'bottomleft'}).addTo(map);
   map.createPane('nafotPane');
   map.getPane('nafotPane').style.zIndex='330';
-  L.tileLayer(TILE_URLS['pal-1940s'],{maxZoom:20,attribution:'Palestine Open Maps'}).addTo(map);
+  L.tileLayer(TILE_URLS.sat,{maxZoom:20,attribution:'© Esri'}).addTo(map);
 }
 
 function setBasemap(val){
@@ -1150,39 +1236,155 @@ async function showModal(feat,lk){
 /* ── Layer Toggle Panel ─────────────────────────────────── */
 function buildLayerToggles(){
   const el=document.getElementById('layerToggles');
-  el.innerHTML=LAYER_KEYS.map(lk=>{
-    const meta=LAYER_META[lk];
-    const name=LANG==='he'?meta.name_he:meta.name_en;
-    const dist=typeDist(lk);
-    const typeRows=Object.entries(dist).map(([tv,cnt])=>{
-      const col=getTypeColor(lk,tv);
-      const chk=(typeVis[lk]&&typeVis[lk][tv]===false)?'':'checked';
-      return `<div class="type-toggle"><label>
-        <input type="checkbox" ${chk} data-lk="${lk}" data-type="${tv}">
-        <span class="legendDot" style="background:${col}"></span>
-        <span>${typeValueLabel(tv,lk)}</span> <span style="color:#94a3b8;font-size:11px">(${cnt})</span>
+  const GROUPS=[
+    {
+      key:'orchardFruitTrees',
+      title:'Orchard Fruit Trees',
+      color:LAYER_META.fruit.color,
+      openByDefault:false,
+      detailsClass:'layer-group-main',
+      note:'',
+      collect:()=>{
+        const out=[];
+        const counts={};
+        (allFeats.fruit||[]).forEach(f=>{
+          if(getDisplayGroupForFeature('fruit',f)!=='orchardFruitTrees')return;
+          const tv=f.properties.tree_type||'ללא שם';
+          const k='fruit::'+tv;
+          counts[k]=(counts[k]||{lk:'fruit',tv,label:typeValueLabel(tv,'fruit'),count:0});
+          counts[k].count++;
+        });
+        Object.values(counts).sort((a,b)=>b.count-a.count).forEach(x=>out.push(x));
+        return out;
+      },
+    },
+    {
+      key:'nonOrchardTrees',
+      title:'Non-Orchard Trees',
+      color:LAYER_META.vegetation.color,
+      openByDefault:false,
+      detailsClass:'layer-group-main',
+      note:'',
+      collect:()=>{
+        const out=[];
+        const counts={};
+        (allFeats.vegetation||[]).forEach(f=>{
+          const tv=f.properties.tree_type||'ללא שם';
+          const k='vegetation::'+tv;
+          counts[k]=(counts[k]||{lk:'vegetation',tv,label:typeValueLabel(tv,'vegetation'),count:0});
+          counts[k].count++;
+        });
+        (allFeats.fruit||[]).forEach(f=>{
+          if(getDisplayGroupForFeature('fruit',f)!=='nonOrchardTrees')return;
+          const tv=f.properties.tree_type||'ללא שם';
+          const k='fruit::'+tv;
+          counts[k]=(counts[k]||{lk:'fruit',tv,label:typeValueLabel(tv,'fruit'),count:0});
+          counts[k].count++;
+        });
+        Object.values(counts).sort((a,b)=>b.count-a.count).forEach(x=>out.push(x));
+        return out;
+      },
+    },
+    {
+      key:'agriculturalInstallations',
+      title:'Agricultural Installations',
+      color:LAYER_META.agtools.color,
+      openByDefault:false,
+      detailsClass:'layer-group-main',
+      note:'Includes: Wine Press, Olive Press, Storage, Terraces, Other Cultural Landscape Features',
+      collect:()=>{
+        const out=[];
+        const counts={};
+        (allFeats.agtools||[]).forEach(f=>{
+          const tv=f.properties.Stationary_agricultural_facilit||'ללא שם';
+          const k='agtools::'+tv;
+          counts[k]=(counts[k]||{lk:'agtools',tv,label:typeValueLabel(tv,'agtools'),count:0});
+          counts[k].count++;
+        });
+        const terraceCount=(allFeats.terraces||[]).length;
+        if(terraceCount>0){
+          out.push({lk:'terraces',tv:'__all__',label:'Terraces',count:terraceCount});
+        }
+        Object.values(counts).sort((a,b)=>b.count-a.count).forEach(x=>out.push(x));
+        return out;
+      },
+    },
+    {
+      key:'optionalSourceLayers',
+      title:'Additional Source Layers',
+      color:LAYER_META.carob.color,
+      openByDefault:false,
+      detailsClass:'optional-source-layers',
+      note:'',
+      collect:()=>{
+        const out=[];
+        const counts={};
+        (allFeats.carob||[]).forEach(f=>{
+          const tv=f.properties.Tree_type||'ללא שם';
+          const k='carob::'+tv;
+          counts[k]=(counts[k]||{lk:'carob',tv,label:typeValueLabel(tv,'carob'),count:0});
+          counts[k].count++;
+        });
+        Object.values(counts).sort((a,b)=>b.count-a.count).forEach(x=>out.push(x));
+        return out;
+      },
+      childLabel:'Non-Orchard / Wild Tree Records',
+    },
+  ];
+
+  const mkGroupHtml=(g)=>{
+    const rows=g.collect();
+    const total=rows.reduce((s,r)=>s+r.count,0);
+    const openAttr=g.openByDefault?' open':'';
+    const parentId=`chk_dg_${g.key}`;
+    const note=g.note?`<p class="small" style="margin:6px 0 8px">${g.note}</p>`:'';
+    const childTitle=g.childLabel?`<div class="small" style="font-weight:600;margin-bottom:4px">${g.childLabel}</div>`:'';
+    const typeRows=rows.map(r=>{
+      const checked=(typeVis[r.lk]&&typeVis[r.lk][r.tv]===false)?'':'checked';
+      const typeId=`chk_type_${g.key}_${r.lk}_${String(r.tv).replace(/[^a-zA-Z0-9_\-]/g,'_')}`;
+      return `<div class="type-toggle"><label for="${typeId}">
+        <input id="${typeId}" type="checkbox" ${checked} data-lk="${r.lk}" data-type="${r.tv}">
+        <span class="legendDot" style="background:${r.lk==='terraces'?LAYER_META.terraces.color:getTypeColor(r.lk,r.tv)}"></span>
+        <span>${r.label}</span> <span style="color:#94a3b8;font-size:11px">(${r.count})</span>
       </label></div>`;
     }).join('');
-    return `<div class="layer-toggle-group">
-      <div class="layer-name">
-        <input type="checkbox" id="chk_${lk}" ${layerVis[lk]?'checked':''}>
-        <span class="legendDot" style="background:${meta.color}"></span>
-        <label for="chk_${lk}" style="cursor:pointer;font-weight:600">${name}</label>
-        <span style="color:#94a3b8;font-size:11px;margin-right:4px">(${(allFeats[lk]||[]).length})</span>
-      </div>
-      ${typeRows}
-    </div>`;
-  }).join('');
-  LAYER_KEYS.forEach(lk=>{
-    const cb=document.getElementById(`chk_${lk}`);
-    if(cb)cb.addEventListener('change',e=>{layerVis[lk]=e.target.checked;renderLayerOnMap(lk);});
+    return `<details class="${g.detailsClass}"${openAttr}>
+      <summary class="layer-group-summary">
+        <span class="layer-group-arrow" aria-hidden="true">▸</span>
+        <span class="layer-name" style="display:flex;align-items:center;gap:6px">
+          <input type="checkbox" id="${parentId}" ${displayGroupVis[g.key]?'checked':''}>
+          <span class="legendDot" style="background:${g.color}"></span>
+          <span>${g.title}</span>
+          <span style="color:#94a3b8;font-size:11px">(${total})</span>
+        </span>
+      </summary>
+      ${note}
+      ${childTitle}
+      <div class="layer-toggle-group" style="margin-top:6px">${typeRows}</div>
+    </details>`;
+  };
+
+  el.innerHTML=GROUPS.map(mkGroupHtml).join('');
+
+  GROUPS.forEach(g=>{
+    const cb=document.getElementById(`chk_dg_${g.key}`);
+    if(!cb)return;
+    cb.addEventListener('click',e=>e.stopPropagation());
+    cb.addEventListener('change',e=>{
+      displayGroupVis[g.key]=e.target.checked;
+      renderAllLayers();
+      updateReadyStatus();
+    });
   });
+
   el.querySelectorAll('input[data-type]').forEach(cb=>{
+    cb.addEventListener('click',e=>e.stopPropagation());
     cb.addEventListener('change',e=>{
       const{lk,type}=e.target.dataset;
       if(!typeVis[lk])typeVis[lk]={};
       typeVis[lk][type]=e.target.checked;
       renderLayerOnMap(lk);
+      updateReadyStatus();
     });
   });
 }
@@ -1200,7 +1402,7 @@ function renderBustanimOnMap(village){
     },
     onEachFeature:(feat,layer)=>{
       const p=feat.properties;
-      layer.bindPopup(`<b>${p.Village||'–'}</b><br>${bustanDescLabel(p.Description)}<br>${fmt(p.Dunam)} ${lh('ד"ש','dn')}<br>${lh('שרד','Survived')}: ${p.Survived||'–'}`);
+      layer.bindPopup(`<b>${p.Village||NOT_AVAILABLE_LABEL}</b><br>${bustanDescLabel(p.Description)}<br>${fmt(p.Dunam)} ${lh('ד"ש','dn')}<br>${lh('שרד','Survived')}: ${p.Survived||NOT_AVAILABLE_LABEL}`);
     }
   }).addTo(map);
   if(village&&bustanimMapLayer.getLayers().length)map.fitBounds(bustanimMapLayer.getBounds(),{padding:[20,20]});
@@ -1321,27 +1523,34 @@ function switchTab(id){
 
 /* ── Overview ───────────────────────────────────────────── */
 function updateOverview(){
-  const ff=allFeats['fruit']||[];
-  const heights=ff.map(f=>f.properties.height).filter(v=>v&&v>0&&v<5000);
-  const girths=ff.map(f=>f.properties.circumference_trunk).filter(v=>v&&v>0&&v<2000);
-  document.getElementById('kFruitTrees').textContent=fmtI(ff.length);
-  document.getElementById('kCarobTrees').textContent=fmtI((allFeats['carob']||[]).length);
+  const fruitFeats=allFeats.fruit||[];
+  const orchardFeats=fruitFeats.filter(f=>getDisplayGroupForFeature('fruit',f)==='orchardFruitTrees');
+  const nonOrchFeats=(allFeats.vegetation||[]).concat(fruitFeats.filter(f=>getDisplayGroupForFeature('fruit',f)==='nonOrchardTrees'));
+  const agriTotal=(allFeats.agtools||[]).length+(allFeats.terraces||[]).length;
+  const heights=orchardFeats.map(f=>f.properties.height).filter(v=>v&&v>0&&v<5000);
+  const girths=orchardFeats.map(f=>f.properties.circumference_trunk).filter(v=>v&&v>0&&v<2000);
+  document.getElementById('kFruitTrees').textContent=fmtI(orchardFeats.length);
+  document.getElementById('kCarobTrees').textContent=fmtI(nonOrchFeats.length);
   document.getElementById('kNafot').textContent=fmtI(nafotFeats.length);
-  document.getElementById('kVegetation').textContent=fmtI((allFeats['vegetation']||[]).length);
-  document.getElementById('kAgTools').textContent=fmtI((allFeats['agtools']||[]).length);
+  document.getElementById('kVegetation').textContent=fmtI(agriTotal);
+  document.getElementById('kAgTools').textContent=fmtI((allFeats['carob']||[]).length);
   document.getElementById('kTerraces').textContent=fmtI((allFeats['terraces']||[]).length);
   document.getElementById('kAvgH').textContent=fmt(mean(heights))+cmUnit();
   document.getElementById('kAvgG').textContent=fmt(mean(girths))+cmUnit();
-  const types=new Set(ff.map(f=>f.properties.tree_type).filter(Boolean));
+  const types=new Set(orchardFeats.map(f=>f.properties.tree_type).filter(Boolean));
   document.getElementById('kFruitTypes').textContent=types.size;
   chartOverviewBar();
   chartOverviewPie();
 }
 
 function chartOverviewBar(){
-  const labels=LAYER_KEYS.map(lk=>LANG==='he'?LAYER_META[lk].name_he:LAYER_META[lk].name_en);
-  const vals=LAYER_KEYS.map(lk=>(allFeats[lk]||[]).length);
-  const colors=LAYER_KEYS.map(lk=>LAYER_META[lk].color);
+  const labels=['Orchard Fruit Trees','Non-Orchard Trees','Agricultural Installations'];
+  const vals=[
+    (allFeats.fruit||[]).filter(f=>getDisplayGroupForFeature('fruit',f)==='orchardFruitTrees').length,
+    (allFeats.vegetation||[]).length+(allFeats.fruit||[]).filter(f=>getDisplayGroupForFeature('fruit',f)==='nonOrchardTrees').length,
+    (allFeats.agtools||[]).length+(allFeats.terraces||[]).length,
+  ];
+  const colors=[LAYER_META.fruit.color,LAYER_META.vegetation.color,LAYER_META.agtools.color];
   Plotly.newPlot('chartOverviewBar',[{
     type:'bar',x:vals,y:labels,orientation:'h',
     marker:{color:colors},text:vals.map(v=>v.toLocaleString('he-IL')),textposition:'outside',
@@ -1349,7 +1558,12 @@ function chartOverviewBar(){
 }
 
 function chartOverviewPie(){
-  const types=typeDist('fruit');
+  const types={};
+  (allFeats.fruit||[]).forEach(f=>{
+    if(getDisplayGroupForFeature('fruit',f)!=='orchardFruitTrees')return;
+    const tv=f.properties.tree_type||'ללא שם';
+    types[tv]=(types[tv]||0)+1;
+  });
   const keys=Object.keys(types).sort((a,b)=>types[b]-types[a]);
   if(!keys.length)return;
   Plotly.newPlot('chartOverviewPie',[{
@@ -1366,20 +1580,22 @@ function renderDistrictsTab(){
   const el=document.getElementById('districtList');
   if(!el)return;
 
-  /* Collect unique districts across fruit+carob+vegetation */
-  const LKEYS_FOR_DIST=['fruit','carob','vegetation','agtools','terraces'];
-  const distMap={}; // nafa → { fruit, carob, vegetation, agtools, terraces }
-  LKEYS_FOR_DIST.forEach(lk=>{
+  const distMap={}; // nafa → { orchard, nonOrchard, agricultural, optional }
+  ['fruit','carob','vegetation','agtools','terraces'].forEach(lk=>{
     (allFeats[lk]||[]).forEach(f=>{
       const nafa=f.properties._nafa||'לא ידוע';
-      if(!distMap[nafa])distMap[nafa]={fruit:0,carob:0,vegetation:0,agtools:0,terraces:0};
-      distMap[nafa][lk]=(distMap[nafa][lk]||0)+1;
+      if(!distMap[nafa])distMap[nafa]={orchard:0,nonOrchard:0,agricultural:0,optional:0};
+      const dg=getDisplayGroupForFeature(lk,f);
+      if(dg==='orchardFruitTrees')distMap[nafa].orchard++;
+      else if(dg==='nonOrchardTrees')distMap[nafa].nonOrchard++;
+      else if(dg==='agriculturalInstallations')distMap[nafa].agricultural++;
+      else if(dg==='optionalSourceLayers')distMap[nafa].optional++;
     });
   });
   /* Include iplan district polygons even if no trees in them */
   nafotFeats.forEach(f=>{
     const n=f.properties.Nafa||'לא ידוע';
-    if(!distMap[n])distMap[n]={fruit:0,carob:0,vegetation:0,agtools:0,terraces:0};
+    if(!distMap[n])distMap[n]={orchard:0,nonOrchard:0,agricultural:0,optional:0};
   });
 
   const customNames=new Set(customNafotFeats.map(f=>(f.properties?.Nafa||'').trim()).filter(Boolean));
@@ -1387,33 +1603,31 @@ function renderDistrictsTab(){
     const aCustom=customNames.has((a||'').trim());
     const bCustom=customNames.has((b||'').trim());
     if(aCustom!==bCustom)return aCustom?1:-1; /* custom districts always at bottom */
-    const tA=LKEYS_FOR_DIST.reduce((s,lk)=>s+distMap[a][lk],0);
-    const tB=LKEYS_FOR_DIST.reduce((s,lk)=>s+distMap[b][lk],0);
+    const tA=distMap[a].orchard+distMap[a].nonOrchard+distMap[a].agricultural;
+    const tB=distMap[b].orchard+distMap[b].nonOrchard+distMap[b].agricultural;
     return tB-tA;
   });
 
   el.innerHTML=`<table class="dist-table">
     <thead><tr>
       <th>${lh('נפה','District')}</th>
-      <th title="${t('fruit_trees')}">${lh('פרי','Fruit')}</th>
-      <th title="${t('carob_trees')}">${lh('סרק','Non-Fruit')}</th>
-      <th title="${t('vegetation')}">${lh('צמחיה','Vegetation')}</th>
-      <th title="${t('ag_tools')}">${lh('כלים','Tools')}</th>
-      <th title="${t('terraces')}">${lh('טרסות','Terraces')}</th>
+      <th title="Orchard Fruit Trees">Orchard</th>
+      <th title="Non-Orchard Trees">Non-Orchard</th>
+      <th title="Agricultural Installations">Agricultural</th>
+      <th title="Optional Source Layers">Optional</th>
       <th>${lh('סה"כ','Total')}</th>
     </tr></thead>
     <tbody>
     ${sorted.map(nafa=>{
       const d=distMap[nafa];
-      const tot=LKEYS_FOR_DIST.reduce((s,lk)=>s+d[lk],0);
+      const tot=d.orchard+d.nonOrchard+d.agricultural;
       const isCustom=customNames.has((nafa||'').trim());
       return`<tr class="dist-row${isCustom?' dist-row-custom':''}" data-nafa="${nafa}">
         <td class="dist-name">${nafaLabel(nafa)}</td>
-        <td>${d.fruit||0}</td>
-        <td>${d.carob||0}</td>
-        <td>${d.vegetation||0}</td>
-        <td>${d.agtools||0}</td>
-        <td>${d.terraces||0}</td>
+        <td>${d.orchard||0}</td>
+        <td>${d.nonOrchard||0}</td>
+        <td>${d.agricultural||0}</td>
+        <td>${d.optional||0}</td>
         <td><strong>${tot}</strong></td>
       </tr>`;
     }).join('')}
@@ -1437,7 +1651,7 @@ function renderDistrictsTab(){
         {lk:'carob',feats:(allFeats.carob||[]).filter(f=>(f.properties._nafa||'לא ידוע')===nafa),color:LAYER_META.carob.color},
         {lk:'vegetation',feats:(allFeats.vegetation||[]).filter(f=>(f.properties._nafa||'לא ידוע')===nafa),color:LAYER_META.vegetation.color},
         {lk:'agtools',feats:(allFeats.agtools||[]).filter(f=>(f.properties._nafa||'לא ידוע')===nafa),color:LAYER_META.agtools.color},
-        {lk:'terraces',feats:(allFeats.terraces||[]).filter(f=>(f.properties._nafa||'לא ידוע')===nafa),color:LAYER_META.terraces.color},
+        {lk:'terraces',feats:(allFeats.terraces||[]).filter(f=>(f.properties._nafa||'לא ידוע')===nafa),color:LAYER_META.agtools.color},
       ],lh('מפה: נפה '+nafa,'Map: district '+nafaLabel(nafa)));
       showDistrictDetail(nafa);
     });
@@ -1450,13 +1664,13 @@ function renderDistrictsTab(){
 }
 
 function renderDistrictCharts(distMap,sorted){
-  /* Chart 1: Stacked bar – fruit trees by district */
+  /* Chart 1: Stacked bar – display groups by district */
   const nafotForChart=sorted.filter(n=>n!=='לא ידוע').slice(0,15);
-  const LKEYS_CHART=['fruit','carob','vegetation'];
-  const colors={fruit:'#16a34a',carob:'#8b6f47',vegetation:'#65a30d'};
-  const names={fruit:t('fruit_trees'),carob:t('carob_trees'),vegetation:t('vegetation')};
+  const GROUP_KEYS=['orchard','nonOrchard','agricultural'];
+  const colors={orchard:'#16a34a',nonOrchard:'#65a30d',agricultural:'#ea580c'};
+  const names={orchard:'Orchard Fruit Trees',nonOrchard:'Non-Orchard Trees',agricultural:'Agricultural Installations'};
   Plotly.newPlot('chartDistrictStack',
-    LKEYS_CHART.map(lk=>({
+    GROUP_KEYS.map(lk=>({
       type:'bar',name:names[lk],
       x:nafotForChart.map(n=>(distMap[n]||{})[lk]||0),
       y:nafotForChart.map(nafaLabel),
@@ -1468,7 +1682,7 @@ function renderDistrictCharts(distMap,sorted){
   );
 
   /* Chart 2: Fruit tree species top-10 per district – heatmap */
-  const fruitFeats=allFeats['fruit']||[];
+  const fruitFeats=(allFeats['fruit']||[]).filter(f=>getDisplayGroupForFeature('fruit',f)==='orchardFruitTrees');
   const allTypes=[...new Set(fruitFeats.map(f=>f.properties.tree_type).filter(Boolean))];
   const typeCounts={};
   nafotForChart.forEach(n=>{
@@ -1492,7 +1706,7 @@ function renderDistrictCharts(distMap,sorted){
       y:nafotForChart.map(nafaLabel),
       colorscale:'YlGn',
       showscale:true,
-    }],layout(lh('מין עץ פרי × נפה (heatmap)','Fruit Tree Species × District (Heatmap)'),lh('מין','Species'),lh('נפה','District')),cfgPlot());
+    }],layout(lh('מין עץ פרי × נפה (heatmap)','Orchard Fruit Tree × District (Heatmap)'),lh('מין','Orchard Fruit Tree'),lh('נפה','District')),cfgPlot());
   }
 
   /* Chart 3: Pie – total fruit trees per district (top 10) */
@@ -1500,11 +1714,11 @@ function renderDistrictCharts(distMap,sorted){
   Plotly.newPlot('chartDistrictPie',[{
     type:'pie',
     labels:top10.map(nafaLabel),
-    values:top10.map(n=>distMap[n].fruit||0),
+    values:top10.map(n=>distMap[n].orchard||0),
     textinfo:'label+percent',
     hole:0.3,
     marker:{colors:TYPE_COLORS.slice(0,10)},
-  }],{title:{text:lh('עצי פרי לפי נפה','Fruit Trees by District'),font:{size:13}},margin:{t:36,b:4,l:4,r:4},paper_bgcolor:'transparent'},cfgPlot());
+  }],{title:{text:lh('עצי פרי לפי נפה','Orchard Fruit Trees by District'),font:{size:13}},margin:{t:36,b:4,l:4,r:4},paper_bgcolor:'transparent'},cfgPlot());
 }
 
 /* ── District detail (reactive, with group filter + species drill-down) ── */
@@ -1547,9 +1761,11 @@ function refreshDistrictDetail(){
     (allFeats[lk]||[]).forEach(f=>{
       if((f.properties._nafa||'לא ידוע')!==nafa)return;
       const tv=f.properties[field]||'ללא שם';
-      const key=lk+'::'+tv;
-      if(!specMap[key])specMap[key]={name:tv,lk,field,lkName:LAYER_META[lk].name_he,lkColor:LAYER_META[lk].color,count:0,heights:[],girths:[],statuses:{}};
+      const displayLk=(lk==='fruit'&&isPricklyPearValue(tv))?'vegetation':lk;
+      const key=displayLk+'::'+tv;
+      if(!specMap[key])specMap[key]={name:tv,lk:displayLk,field,lkName:LAYER_META[displayLk].name_he,lkColor:LAYER_META[displayLk].color,count:0,heights:[],girths:[],statuses:{},items:[]};
       const s=specMap[key]; s.count++;
+      s.items.push({lk,feat:f});
       const h=f.properties.height; if(h&&+h>0&&+h<5000)s.heights.push(+h);
       const g=f.properties.circumference_trunk; if(g&&+g>0&&+g<2000)s.girths.push(+g);
       const st=statusKey(f.properties.status); s.statuses[st]=(s.statuses[st]||0)+1;
@@ -1566,18 +1782,18 @@ function refreshDistrictDetail(){
     <tbody>${sorted.map(s=>{
       const hm=mean(s.heights),hmed=median(s.heights),hsd=stddev(s.heights),hmn=arrMin(s.heights),hmx=arrMax(s.heights);
       const gm=mean(s.girths);
-      const topStRaw=Object.keys(s.statuses).sort((a,b)=>s.statuses[b]-s.statuses[a])[0]||'–';
-      const topSt=topStRaw==='–' ? topStRaw : statusLabel(topStRaw);
+      const topStRaw=Object.keys(s.statuses).sort((a,b)=>s.statuses[b]-s.statuses[a])[0]||NOT_AVAILABLE_LABEL;
+      const topSt=topStRaw===NOT_AVAILABLE_LABEL ? topStRaw : statusLabel(topStRaw);
       return`<tr class="species-row dist-species-row" data-key="${s.lk}::${s.name}">
         <td class="species-name" style="border-right:3px solid ${s.lkColor};padding-right:6px;cursor:pointer;color:var(--primary)">${typeValueLabel(s.name,s.lk)} ↗</td>
         <td><span class="layer-badge" style="background:${s.lkColor}">${lh(s.lkName,LAYER_META[s.lk].name_en)}</span></td>
         <td><strong>${s.count}</strong></td>
-        <td>${hm!=null?fmt(hm)+cmUnit():'–'}</td>
-        <td>${hmed!=null?fmt(hmed)+cmUnit():'–'}</td>
-        <td>${hsd!=null?fmt(hsd):'–'}</td>
-        <td>${hmn!=null?fmt(hmn)+cmUnit():'–'}</td>
-        <td>${hmx!=null?fmt(hmx)+cmUnit():'–'}</td>
-        <td>${gm!=null?fmt(gm)+cmUnit():'–'}</td>
+        <td>${hm!=null?fmt(hm)+cmUnit():NO_DATA_LABEL}</td>
+        <td>${hmed!=null?fmt(hmed)+cmUnit():NO_DATA_LABEL}</td>
+        <td>${hsd!=null?fmt(hsd):NO_DATA_LABEL}</td>
+        <td>${hmn!=null?fmt(hmn)+cmUnit():NO_DATA_LABEL}</td>
+        <td>${hmx!=null?fmt(hmx)+cmUnit():NO_DATA_LABEL}</td>
+        <td>${gm!=null?fmt(gm)+cmUnit():NO_DATA_LABEL}</td>
         <td>${topSt}</td>
       </tr>`;
     }).join('')}</tbody>
@@ -1599,12 +1815,9 @@ function refreshDistrictDetail(){
 
 function showDistrictSpeciesDetail(nafa,spec){
   if(!spec)return;
-  const focusFeats=(allFeats[spec.lk]||[]).filter(f=>{
-    if((f.properties._nafa||'לא ידוע')!==nafa)return false;
-    return (f.properties[spec.field]||'ללא שם')===spec.name;
-  });
+  const focusItems=(spec.items||[]).filter(({feat})=>(feat.properties._nafa||'לא ידוע')===nafa);
   applyMapProjectionGroups([
-    {lk:spec.lk,feats:focusFeats,color:spec.lkColor}
+    {items:focusItems,color:spec.lkColor}
   ],lh('מפה: '+spec.name+' בנפה '+nafa,'Map: '+typeValueLabel(spec.name,spec.lk)+' in '+nafaLabel(nafa)));
   const panel=document.getElementById('districtSpeciesDetailPanel');
   panel.style.display='block';
@@ -1665,9 +1878,11 @@ function buildSpeciesRegistry(){
   SPECIES_LKDEFS.forEach(({lk,field})=>{
     (allFeats[lk]||[]).forEach(f=>{
       const tv=f.properties[field]||'ללא שם';
-      const key=lk+'::'+tv;
-      if(!reg[key])reg[key]={name:tv,lk,field,lkName:LAYER_META[lk].name_he,lkColor:LAYER_META[lk].color,heights:[],girths:[],statuses:{},nafot:{},count:0};
+      const displayLk=(lk==='fruit'&&isPricklyPearValue(tv))?'vegetation':lk;
+      const key=displayLk+'::'+tv;
+      if(!reg[key])reg[key]={name:tv,lk:displayLk,field,lkName:LAYER_META[displayLk].name_he,lkColor:LAYER_META[displayLk].color,heights:[],girths:[],statuses:{},nafot:{},count:0,sampleItems:[]};
       const r=reg[key]; r.count++;
+      r.sampleItems.push({lk,feat:f});
       const h=f.properties.height; if(h&&+h>0&&+h<5000)r.heights.push(+h);
       const g=f.properties.circumference_trunk; if(g&&+g>0&&+g<2000)r.girths.push(+g);
       const s=statusKey(f.properties.status); r.statuses[s]=(r.statuses[s]||0)+1;
@@ -1680,7 +1895,7 @@ function buildSpeciesRegistry(){
     r.g_mean=mean(r.girths);r.g_median=median(r.girths);r.g_std=stddev(r.girths);
     r.g_min=arrMin(r.girths);r.g_max=arrMax(r.girths);
     const sk=Object.keys(r.statuses).sort((a,b)=>r.statuses[b]-r.statuses[a]);
-    r.topStatus=sk[0]||'–';
+    r.topStatus=sk[0]||NOT_AVAILABLE_LABEL;
   });
   return reg;
 }
@@ -1723,51 +1938,69 @@ function _populateSpeciesCmpSels(){
     const sel=document.getElementById(id);
     if(sel){sel.innerHTML=opts;if(entries[i])sel.value=entries[i][0];}
   });
+  const dSel=document.getElementById('speciesCmpDistrict');
+  if(dSel){
+    const prev=dSel.value||'';
+    const districts=[...new Set(nafotFeats.map(f=>f.properties?.Nafa).filter(Boolean).filter(n=>n!=='לא ידוע'))].sort();
+    dSel.innerHTML=`<option value="">All districts</option>`+districts.map(n=>`<option value="${n}">${nafaLabel(n)}</option>`).join('');
+    dSel.value=districts.includes(prev)?prev:'';
+  }
 }
 
 function runSpeciesComparison(){
   const reg=_speciesReg; if(!reg)return;
   const keyA=document.getElementById('speciesCmpA').value;
   const keyB=document.getElementById('speciesCmpB').value;
+  const district=document.getElementById('speciesCmpDistrict')?.value||'';
   if(!keyA||!keyB||keyA===keyB){document.getElementById('speciesCmpResult').innerHTML=`<div class="small">${t('choose_two_species')}</div>`;return;}
   const rA=reg[keyA], rB=reg[keyB];
-  const featsA=(allFeats[rA.lk]||[]).filter(f=>(f.properties[rA.field]||'ללא שם')===rA.name);
-  const featsB=(allFeats[rB.lk]||[]).filter(f=>(f.properties[rB.field]||'ללא שם')===rB.name);
+  const itemsA=(rA.sampleItems||[]).filter(({feat})=>!district || (feat.properties._nafa||'לא ידוע')===district);
+  const itemsB=(rB.sampleItems||[]).filter(({feat})=>!district || (feat.properties._nafa||'לא ידוע')===district);
+  const featsA=itemsA.map(x=>x.feat);
+  const featsB=itemsB.map(x=>x.feat);
+  if(!featsA.length||!featsB.length){
+    document.getElementById('speciesCmpResult').innerHTML=`<div class="small">No data for selected district filter.</div>`;
+    ['chartSpeciesCmpBox','chartSpeciesCmpBar'].forEach(id=>{try{Plotly.purge(id);}catch(e){} const el=document.getElementById(id); if(el)el.innerHTML='';});
+    return;
+  }
   applyMapProjectionGroups([
-    {lk:rA.lk,feats:featsA,color:'#2563eb'},
-    {lk:rB.lk,feats:featsB,color:'#dc2626'},
+    {items:itemsA,color:'#2563eb'},
+    {items:itemsB,color:'#dc2626'},
   ],lh('מפה: השוואת מינים '+rA.name+' מול '+rB.name,'Map: species compare '+typeValueLabel(rA.name,rA.lk)+' vs '+typeValueLabel(rB.name,rB.lk)));
+  const sA=computeStats(featsA);
+  const sB=computeStats(featsB);
   const rows=[
-    [t('object_count'),fmtI(rA.count),fmtI(rB.count)],
-    [t('mean_h'),fmt(rA.h_mean),fmt(rB.h_mean)],
-    [t('median_h'),fmt(rA.h_median),fmt(rB.h_median)],
-    ['σ '+t('height'),fmt(rA.h_std),fmt(rB.h_std)],
-    [t('min_h'),fmt(rA.h_min),fmt(rB.h_min)],
-    [t('max_h'),fmt(rA.h_max),fmt(rB.h_max)],
-    [t('mean_g'),fmt(rA.g_mean),fmt(rB.g_mean)],
-    [t('median_g'),fmt(rA.g_median),fmt(rB.g_median)],
-    ['σ '+t('girth'),fmt(rA.g_std),fmt(rB.g_std)],
+    [t('object_count'),fmtI(sA.count),fmtI(sB.count)],
+    [t('mean_h'),fmt(sA.mean_h),fmt(sB.mean_h)],
+    [t('median_h'),fmt(sA.median_h),fmt(sB.median_h)],
+    ['σ '+t('height'),fmt(sA.std_h),fmt(sB.std_h)],
+    [t('min_h'),fmt(sA.min_h),fmt(sB.min_h)],
+    [t('max_h'),fmt(sA.max_h),fmt(sB.max_h)],
+    [t('mean_g'),fmt(sA.mean_g),fmt(sB.mean_g)],
+    [t('median_g'),fmt(sA.median_g),fmt(sB.median_g)],
+    ['σ '+t('girth'),fmt(sA.std_g),fmt(sB.std_g)],
     [t('dominant_status'),statusLabel(rA.topStatus),statusLabel(rB.topStatus)],
   ];
   document.getElementById('speciesCmpResult').innerHTML=`
     <div class="cmp-summary">
-      <div class="cmp-summary-card side-a"><h5>${typeValueLabel(rA.name,rA.lk)}</h5><div class="big-num">${fmtI(rA.count)}</div><div class="small">${lh(rA.lkName,LAYER_META[rA.lk].name_en)}</div></div>
-      <div class="cmp-summary-card side-b"><h5>${typeValueLabel(rB.name,rB.lk)}</h5><div class="big-num">${fmtI(rB.count)}</div><div class="small">${lh(rB.lkName,LAYER_META[rB.lk].name_en)}</div></div>
+      <div class="cmp-summary-card side-a"><h5>${typeValueLabel(rA.name,rA.lk)}</h5><div class="big-num">${fmtI(sA.count)}</div><div class="small">${lh(rA.lkName,LAYER_META[rA.lk].name_en)}</div></div>
+      <div class="cmp-summary-card side-b"><h5>${typeValueLabel(rB.name,rB.lk)}</h5><div class="big-num">${fmtI(sB.count)}</div><div class="small">${lh(rB.lkName,LAYER_META[rB.lk].name_en)}</div></div>
     </div>
+    ${district?`<div class="small" style="margin-top:6px">District filter: <strong>${nafaLabel(district)}</strong></div>`:''}
     <table class="cmp-table" style="margin-top:10px">
       <thead><tr><th class="metric-name">${t('metric')}</th><th class="highlight-a">${typeValueLabel(rA.name,rA.lk)}</th><th class="highlight-b">${typeValueLabel(rB.name,rB.lk)}</th></tr></thead>
       <tbody>${rows.map(([m,a,b])=>`<tr><td class="metric-name">${m}</td><td>${a}</td><td>${b}</td></tr>`).join('')}</tbody>
     </table>`;
   const pc=cfgPlot();
     Plotly.newPlot('chartSpeciesCmpBox',[
-    {type:'box',y:rA.heights,name:typeValueLabel(rA.name,rA.lk),marker:{color:'#3b82f6'},boxmean:true},
-    {type:'box',y:rB.heights,name:typeValueLabel(rB.name,rB.lk),marker:{color:'#7c3aed'},boxmean:true},
-    {type:'box',y:rA.girths,name:typeValueLabel(rA.name,rA.lk)+lh(' (היקף)',' (Girth)'),marker:{color:'#93c5fd'},boxmean:true,visible:'legendonly'},
-    {type:'box',y:rB.girths,name:typeValueLabel(rB.name,rB.lk)+lh(' (היקף)',' (Girth)'),marker:{color:'#c4b5fd'},boxmean:true,visible:'legendonly'},
+    {type:'box',y:sA.h,name:typeValueLabel(rA.name,rA.lk),marker:{color:'#3b82f6'},boxmean:true},
+    {type:'box',y:sB.h,name:typeValueLabel(rB.name,rB.lk),marker:{color:'#7c3aed'},boxmean:true},
+    {type:'box',y:sA.g,name:typeValueLabel(rA.name,rA.lk)+lh(' (היקף)',' (Girth)'),marker:{color:'#93c5fd'},boxmean:true,visible:'legendonly'},
+    {type:'box',y:sB.g,name:typeValueLabel(rB.name,rB.lk)+lh(' (היקף)',' (Girth)'),marker:{color:'#c4b5fd'},boxmean:true,visible:'legendonly'},
   ],layout(lh('גובה לפי מין – Box Plot','Height by Species – Box Plot'),'',lh('ס"מ','cm')),pc);
   Plotly.newPlot('chartSpeciesCmpBar',[
-    {type:'bar',name:typeValueLabel(rA.name,rA.lk),x:[t('mean_h'),t('median_h'),t('mean_g')],y:[rA.h_mean||0,rA.h_median||0,rA.g_mean||0],marker:{color:'#3b82f6'}},
-    {type:'bar',name:typeValueLabel(rB.name,rB.lk),x:[t('mean_h'),t('median_h'),t('mean_g')],y:[rB.h_mean||0,rB.h_median||0,rB.g_mean||0],marker:{color:'#7c3aed'}},
+    {type:'bar',name:typeValueLabel(rA.name,rA.lk),x:[t('mean_h'),t('median_h'),t('mean_g')],y:[sA.mean_h||0,sA.median_h||0,sA.mean_g||0],marker:{color:'#3b82f6'}},
+    {type:'bar',name:typeValueLabel(rB.name,rB.lk),x:[t('mean_h'),t('median_h'),t('mean_g')],y:[sB.mean_h||0,sB.median_h||0,sB.mean_g||0],marker:{color:'#7c3aed'}},
   ],layout(t('species_metrics_compare'),'',lh('ס"מ','cm'),{barmode:'group'}),pc);
   document.getElementById('speciesCmpPanel').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
@@ -1779,7 +2012,7 @@ function renderSpeciesTable(){
   let entries=Object.entries(reg).sort((a,b)=>b[1].count-a[1].count);
   if(lkFilter)entries=entries.filter(([,r])=>r.lk===lkFilter);
   if(q)entries=entries.filter(([,r])=>r.name.toLowerCase().includes(q));
-  document.getElementById('speciesCount').textContent=entries.length+' '+lh('מינים','species');
+  document.getElementById('speciesCount').textContent=entries.length+' '+lh('מינים','orchard fruit trees');
   const el=document.getElementById('speciesTable');
   el.innerHTML=`<table class="species-table">
     <thead><tr>
@@ -1791,14 +2024,14 @@ function renderSpeciesTable(){
       <td class="species-name" style="border-right:3px solid ${r.lkColor};padding-right:6px">${typeValueLabel(r.name,r.lk)}</td>
       <td><span class="layer-badge" style="background:${r.lkColor}">${lh(r.lkName,LAYER_META[r.lk].name_en)}</span></td>
       <td><strong>${r.count}</strong></td>
-      <td>${r.h_mean!=null?fmt(r.h_mean):'–'}</td>
-      <td>${r.h_median!=null?fmt(r.h_median):'–'}</td>
-      <td>${r.h_std!=null?fmt(r.h_std):'–'}</td>
-      <td>${r.h_min!=null?fmt(r.h_min):'–'}</td>
-      <td>${r.h_max!=null?fmt(r.h_max):'–'}</td>
-      <td>${r.g_mean!=null?fmt(r.g_mean):'–'}</td>
-      <td>${r.g_std!=null?fmt(r.g_std):'–'}</td>
-      <td>${r.topStatus==='–' ? r.topStatus : statusLabel(r.topStatus)}</td>
+      <td>${r.h_mean!=null?fmt(r.h_mean):NO_DATA_LABEL}</td>
+      <td>${r.h_median!=null?fmt(r.h_median):NO_DATA_LABEL}</td>
+      <td>${r.h_std!=null?fmt(r.h_std):NO_DATA_LABEL}</td>
+      <td>${r.h_min!=null?fmt(r.h_min):NO_DATA_LABEL}</td>
+      <td>${r.h_max!=null?fmt(r.h_max):NO_DATA_LABEL}</td>
+      <td>${r.g_mean!=null?fmt(r.g_mean):NO_DATA_LABEL}</td>
+      <td>${r.g_std!=null?fmt(r.g_std):NO_DATA_LABEL}</td>
+      <td>${r.topStatus===NOT_AVAILABLE_LABEL ? r.topStatus : statusLabel(r.topStatus)}</td>
     </tr>`).join('')}</tbody>
   </table>`;
   el.querySelectorAll('.species-row').forEach(row=>{
@@ -1812,9 +2045,10 @@ function renderSpeciesTable(){
 
 function showSpeciesDetail(key,reg){
   const r=reg[key]; if(!r)return;
-  const speciesFeats=(allFeats[r.lk]||[]).filter(f=>(f.properties[r.field]||'ללא שם')===r.name);
+  const speciesItems=r.sampleItems||[];
+  const speciesFeats=speciesItems.map(x=>x.feat);
   applyMapProjectionGroups([
-    {lk:r.lk,feats:speciesFeats,color:r.lkColor}
+    {items:speciesItems,color:r.lkColor}
   ],lh('מפה: מין '+r.name,'Map: species '+typeValueLabel(r.name,r.lk)));
   const detail=document.getElementById('speciesDetail');
   detail.style.display='block';
@@ -1827,26 +2061,26 @@ function showSpeciesDetail(key,reg){
   document.getElementById('speciesDetailStats').innerHTML=`
     <div class="ssg">
       <div class="ssg-card"><div class="ssg-val" style="color:${r.lkColor}">${r.count}</div><div class="ssg-lbl">${lh('כמות','Count')}</div></div>
-      <div class="ssg-card"><div class="ssg-val">${r.h_mean!=null?fmt(r.h_mean)+cmUnit():'–'}</div><div class="ssg-lbl">${lh('גובה ממוצע','Mean Height')}</div></div>
-      <div class="ssg-card"><div class="ssg-val">${r.h_median!=null?fmt(r.h_median)+cmUnit():'–'}</div><div class="ssg-lbl">${lh('חציון גובה','Median Height')}</div></div>
-      <div class="ssg-card"><div class="ssg-val">${r.h_std!=null?fmt(r.h_std)+cmUnit():'–'}</div><div class="ssg-lbl">σ ${lh('גובה','Height')}</div></div>
-      <div class="ssg-card"><div class="ssg-val">${r.h_min!=null?fmt(r.h_min)+cmUnit():'–'}</div><div class="ssg-lbl">${lh('מינ׳ גובה','Min Height')}</div></div>
-      <div class="ssg-card"><div class="ssg-val">${r.h_max!=null?fmt(r.h_max)+cmUnit():'–'}</div><div class="ssg-lbl">${lh('מקס׳ גובה','Max Height')}</div></div>
-      <div class="ssg-card"><div class="ssg-val">${r.g_mean!=null?fmt(r.g_mean)+cmUnit():'–'}</div><div class="ssg-lbl">${lh('היקף ממוצע','Mean Girth')}</div></div>
-      <div class="ssg-card"><div class="ssg-val">${r.g_median!=null?fmt(r.g_median)+cmUnit():'–'}</div><div class="ssg-lbl">${lh('חציון היקף','Median Girth')}</div></div>
-      <div class="ssg-card"><div class="ssg-val">${r.g_std!=null?fmt(r.g_std)+cmUnit():'–'}</div><div class="ssg-lbl">σ ${lh('היקף','Girth')}</div></div>
-      <div class="ssg-card"><div class="ssg-val">${r.g_min!=null?fmt(r.g_min)+cmUnit():'–'}</div><div class="ssg-lbl">${lh('מינ׳ היקף','Min Girth')}</div></div>
-      <div class="ssg-card"><div class="ssg-val">${r.g_max!=null?fmt(r.g_max)+cmUnit():'–'}</div><div class="ssg-lbl">${lh('מקס׳ היקף','Max Girth')}</div></div>
+      <div class="ssg-card"><div class="ssg-val">${r.h_mean!=null?fmt(r.h_mean)+cmUnit():NO_DATA_LABEL}</div><div class="ssg-lbl">${lh('גובה ממוצע','Mean Height')}</div></div>
+      <div class="ssg-card"><div class="ssg-val">${r.h_median!=null?fmt(r.h_median)+cmUnit():NO_DATA_LABEL}</div><div class="ssg-lbl">${lh('חציון גובה','Median Height')}</div></div>
+      <div class="ssg-card"><div class="ssg-val">${r.h_std!=null?fmt(r.h_std)+cmUnit():NO_DATA_LABEL}</div><div class="ssg-lbl">σ ${lh('גובה','Height')}</div></div>
+      <div class="ssg-card"><div class="ssg-val">${r.h_min!=null?fmt(r.h_min)+cmUnit():NO_DATA_LABEL}</div><div class="ssg-lbl">${lh('מינ׳ גובה','Min Height')}</div></div>
+      <div class="ssg-card"><div class="ssg-val">${r.h_max!=null?fmt(r.h_max)+cmUnit():NO_DATA_LABEL}</div><div class="ssg-lbl">${lh('מקס׳ גובה','Max Height')}</div></div>
+      <div class="ssg-card"><div class="ssg-val">${r.g_mean!=null?fmt(r.g_mean)+cmUnit():NO_DATA_LABEL}</div><div class="ssg-lbl">${lh('היקף ממוצע','Mean Girth')}</div></div>
+      <div class="ssg-card"><div class="ssg-val">${r.g_median!=null?fmt(r.g_median)+cmUnit():NO_DATA_LABEL}</div><div class="ssg-lbl">${lh('חציון היקף','Median Girth')}</div></div>
+      <div class="ssg-card"><div class="ssg-val">${r.g_std!=null?fmt(r.g_std)+cmUnit():NO_DATA_LABEL}</div><div class="ssg-lbl">σ ${lh('היקף','Girth')}</div></div>
+      <div class="ssg-card"><div class="ssg-val">${r.g_min!=null?fmt(r.g_min)+cmUnit():NO_DATA_LABEL}</div><div class="ssg-lbl">${lh('מינ׳ היקף','Min Girth')}</div></div>
+      <div class="ssg-card"><div class="ssg-val">${r.g_max!=null?fmt(r.g_max)+cmUnit():NO_DATA_LABEL}</div><div class="ssg-lbl">${lh('מקס׳ היקף','Max Girth')}</div></div>
     </div>
     ${nafotTop?`<div class="small mt8"><strong>${lh('נפות מובילות:','Top Districts:')}</strong> ${nafotTop}</div>`:''}`;
   const pc=cfgPlot();
   const STATUS_COLORS=['#16a34a','#f59e0b','#dc2626','#94a3b8','#475569','#0891b2'];
   /* Height histogram */
   if(r.heights.length>1)
-    Plotly.newPlot('chartSpeciesHeightHist',[{type:'histogram',x:r.heights,nbinsx:25,marker:{color:r.lkColor,opacity:0.8}}],layout('התפלגות גובה – '+r.name,'גובה (ס"מ)','כמות'),pc);
+    Plotly.newPlot('chartSpeciesHeightHist',[{type:'histogram',x:r.heights,nbinsx:25,marker:{color:r.lkColor,opacity:0.8}}],layout('Height Distribution – '+typeValueLabel(r.name,r.lk),'Height (cm)','Count'),pc);
   /* Girth histogram */
   if(r.girths.length>1)
-    Plotly.newPlot('chartSpeciesGirthHist',[{type:'histogram',x:r.girths,nbinsx:25,marker:{color:'#065f46',opacity:0.8}}],layout('התפלגות היקף – '+r.name,'היקף (ס"מ)','כמות'),pc);
+    Plotly.newPlot('chartSpeciesGirthHist',[{type:'histogram',x:r.girths,nbinsx:25,marker:{color:'#065f46',opacity:0.8}}],layout('Girth Distribution – '+typeValueLabel(r.name,r.lk),'Girth (cm)','Count'),pc);
   /* Status pie */
   const sk=Object.keys(r.statuses);
   if(sk.length)
@@ -1854,7 +2088,7 @@ function showSpeciesDetail(key,reg){
   /* Distribution by district */
   const nafotArr=Object.entries(r.nafot).filter(([n])=>n!=='לא ידוע').sort((a,b)=>b[1]-a[1]).slice(0,12);
   if(nafotArr.length)
-    Plotly.newPlot('chartSpeciesNafot',[{type:'bar',x:nafotArr.map(([,c])=>c),y:nafotArr.map(([n])=>nafaLabel(n)),orientation:'h',marker:{color:r.lkColor},text:nafotArr.map(([,c])=>c),textposition:'outside'}],layout('פיזור לפי נפה – '+r.name,'כמות',''),pc);
+    Plotly.newPlot('chartSpeciesNafot',[{type:'bar',x:nafotArr.map(([,c])=>c),y:nafotArr.map(([n])=>nafaLabel(n)),orientation:'h',marker:{color:r.lkColor},text:nafotArr.map(([,c])=>c),textposition:'outside'}],layout('Distribution by District – '+typeValueLabel(r.name,r.lk),'Count',''),pc);
   /* Box plot height by district */
   const boxData={};
   nafotArr.forEach(([n])=>boxData[n]=[]);
@@ -1865,15 +2099,16 @@ function showSpeciesDetail(key,reg){
   });
   const boxTraces=nafotArr.map(([n],i)=>({type:'box',y:boxData[n]||[],name:nafaLabel(n),marker:{color:TYPE_COLORS[i%TYPE_COLORS.length]},boxmean:true})).filter(t=>t.y.length>0);
   if(boxTraces.length>1)
-    Plotly.newPlot('chartSpeciesBoxNafot',boxTraces,layout('גובה לפי נפה – '+r.name,'נפה','גובה (ס"מ)'),pc);
+    Plotly.newPlot('chartSpeciesBoxNafot',boxTraces,layout('Height by District – '+typeValueLabel(r.name,r.lk),'District','Height (cm)'),pc);
   detail.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 /* ── Analytics ──────────────────────────────────────────── */
 function _buildAnalyticsSpeciesList(){
   const grp=document.getElementById('analyticsFilterGroup').value;
-  const lkDefs=grp?SPECIES_LKDEFS.filter(d=>d.lk===grp):SPECIES_LKDEFS;
-  const types=[...new Set(lkDefs.flatMap(({lk,field})=>(allFeats[lk]||[]).map(f=>f.properties[field]).filter(Boolean)))].sort();
+  const lkDefs=grp?SPECIES_LKDEFS.filter(d=>d.lk===grp):SPECIES_LKDEFS.filter(d=>d.lk!=='carob');
+  const typePairs=[...new Set(lkDefs.flatMap(({lk,field})=>(allFeats[lk]||[]).map(f=>f.properties[field]).filter(Boolean)))].map(raw=>({raw,label:typeValueLabel(raw,grp||'fruit')}));
+  const types=typePairs.map(x=>x.label).sort((a,b)=>a.localeCompare(b));
   const dl=document.getElementById('analyticsSpeciesList');
   if(dl)dl.innerHTML=types.map(s=>`<option value="${s}">`).join('');
 }
@@ -1886,23 +2121,30 @@ function _buildAnalyticsNafaList(){
 
 function _getAnalyticsFeats(){
   const grp=document.getElementById('analyticsFilterGroup').value;
-  const spec=document.getElementById('analyticsFilterSpecies').value.trim();
+  const specInput=document.getElementById('analyticsFilterSpecies').value.trim();
   const nafaSel=[...document.getElementById('analyticsFilterNafa').selectedOptions].map(o=>o.value);
-  const lks=grp?[grp]:['fruit','carob','vegetation'];
+  const lks=grp==='vegetation' ? ['vegetation','fruit'] : (grp ? [grp] : ['fruit','vegetation','agtools','terraces']);
+  const lkDefs=grp?SPECIES_LKDEFS.filter(d=>d.lk===grp):SPECIES_LKDEFS.filter(d=>d.lk!=='carob');
+  const specRaw=resolveSpeciesInput(specInput,lkDefs);
   const feats={};
   lks.forEach(lk=>{
     const tf=LAYER_META[lk].typeField;
     feats[lk]=(allFeats[lk]||[]).filter(f=>{
-      if(spec&&tf&&(f.properties[tf]||'')!==spec)return false;
+      const dg=getDisplayGroupForFeature(lk,f);
+      if(grp==='fruit' && dg!=='orchardFruitTrees')return false;
+      if(grp==='vegetation' && dg!=='nonOrchardTrees')return false;
+      if(!grp && lk==='fruit' && dg!=='orchardFruitTrees')return false;
+      if(specInput&&specRaw&&tf&&(f.properties[tf]||'')!==specRaw)return false;
+      if(specInput&&!specRaw)return false;
       if(nafaSel.length&&!nafaSel.includes(f.properties._nafa||'לא ידוע'))return false;
       return true;
     });
   });
-  return{lks,feats,grp,spec,nafaSel};
+  return{lks,feats,grp,specInput,specRaw,nafaSel};
 }
 
 function renderAnalyticsCharts(){
-  const{lks,feats,grp,spec,nafaSel}=_getAnalyticsFeats();
+  const{lks,feats,grp,specInput,specRaw,nafaSel}=_getAnalyticsFeats();
   const mainLk=grp||'fruit';
   const mainFeats=feats[mainLk]||[];
   const total=lks.reduce((s,lk)=>s+(feats[lk]||[]).length,0);
@@ -1937,44 +2179,44 @@ function renderAnalyticsCharts(){
   if(stEl){
     const parts=[];
     if(grp)parts.push(lh('תחום: ','Group: ')+lh(LAYER_META[grp].name_he,LAYER_META[grp].name_en));
-    if(spec)parts.push(lh('מין: ','Species: ')+typeValueLabel(spec,grp||'fruit'));
+    if(specInput)parts.push(lh('מין: ','Species: ')+(specRaw?typeValueLabel(specRaw,grp||'fruit'):NOT_AVAILABLE_LABEL));
     if(nafaSel.length)parts.push(lh('נפות: ','Districts: ')+nafaSel.map(nafaLabel).join(', '));
     stEl.textContent=total.toLocaleString()+' '+t('objects')+(parts.length?' | '+parts.join(' | '):'');
   }
   const pc=cfgPlot();
   /* 1 – Type distribution */
   const tf=LAYER_META[mainLk].typeField;
-  const td={}; mainFeats.forEach(f=>{const v=(tf?f.properties[tf]||'ללא שם':'–');td[v]=(td[v]||0)+1;});
+  const td={}; mainFeats.forEach(f=>{const v=(tf?f.properties[tf]||'ללא שם':NOT_AVAILABLE_LABEL);td[v]=(td[v]||0)+1;});
   const tKeys=Object.keys(td).sort((a,b)=>td[b]-td[a]);
-  Plotly.newPlot('chartTypeDist',[{type:'bar',x:tKeys.map(tv=>typeValueLabel(tv,mainLk)),y:tKeys.map(k=>td[k]),marker:{color:tKeys.map((_,i)=>TYPE_COLORS[i%TYPE_COLORS.length])},text:tKeys.map(k=>td[k]),textposition:'outside'}],layout('התפלגות סוגים — '+(grp?LAYER_META[grp].name_he:'כל התחומים'),'סוג','כמות'),pc);
+  Plotly.newPlot('chartTypeDist',[{type:'bar',x:tKeys.map(tv=>typeValueLabel(tv,mainLk)),y:tKeys.map(k=>td[k]),marker:{color:tKeys.map((_,i)=>TYPE_COLORS[i%TYPE_COLORS.length])},text:tKeys.map(k=>td[k]),textposition:'outside'}],layout('Type Distribution — '+(grp?LAYER_META[grp].name_en:'All Groups'),'Type','Count'),pc);
   /* 2 – Height histogram */
   const hArr=mainFeats.map(f=>+f.properties.height).filter(v=>v>0&&v<5000);
-  if(hArr.length)Plotly.newPlot('chartHeightDist',[{type:'histogram',x:hArr,nbinsx:30,marker:{color:LAYER_META[mainLk].color,opacity:0.75}}],layout('התפלגות גובה','גובה (ס"מ)','כמות'),pc);
+  if(hArr.length)Plotly.newPlot('chartHeightDist',[{type:'histogram',x:hArr,nbinsx:30,marker:{color:LAYER_META[mainLk].color,opacity:0.75}}],layout('Height Distribution','Height (cm)','Count'),pc);
   /* 3 – Girth histogram */
   const gArr=mainFeats.map(f=>+f.properties.circumference_trunk).filter(v=>v>0&&v<2000);
-  if(gArr.length)Plotly.newPlot('chartGirthDist',[{type:'histogram',x:gArr,nbinsx:30,marker:{color:'#065f46',opacity:0.75}}],layout('התפלגות היקף גזע','היקף (ס"מ)','כמות'),pc);
+  if(gArr.length)Plotly.newPlot('chartGirthDist',[{type:'histogram',x:gArr,nbinsx:30,marker:{color:'#065f46',opacity:0.75}}],layout('Trunk Girth Distribution','Girth (cm)','Count'),pc);
   /* 4 – Box plot height by top types */
   const topTypes=tKeys.slice(0,8);
-  const boxTraces=topTypes.map((tv,i)=>({type:'box',y:mainFeats.filter(f=>(tf?f.properties[tf]||'ללא שם':'–')===tv).map(f=>f.properties.height).filter(v=>v&&v>0&&v<5000),name:typeValueLabel(tv,mainLk),marker:{color:TYPE_COLORS[i%TYPE_COLORS.length]}})).filter(t=>t.y.length>0);
-  if(boxTraces.length)Plotly.newPlot('chartHeightBox',boxTraces,layout('גובה לפי סוג','סוג','גובה (ס"מ)'),pc);
+  const boxTraces=topTypes.map((tv,i)=>({type:'box',y:mainFeats.filter(f=>(tf?f.properties[tf]||'ללא שם':NOT_AVAILABLE_LABEL)===tv).map(f=>f.properties.height).filter(v=>v&&v>0&&v<5000),name:typeValueLabel(tv,mainLk),marker:{color:TYPE_COLORS[i%TYPE_COLORS.length]}})).filter(t=>t.y.length>0);
+  if(boxTraces.length)Plotly.newPlot('chartHeightBox',boxTraces,layout('Height by Type','Type','Height (cm)'),pc);
   /* 5 – Status */
   const sd={}; mainFeats.forEach(f=>{const v=statusKey(f.properties.status);sd[v]=(sd[v]||0)+1;});
   const sk=Object.keys(sd),sv=sk.map(k=>sd[k]);
-  if(sk.length)Plotly.newPlot('chartStatusDist',[{type:'bar',x:sk.map(statusLabel),y:sv,marker:{color:['#16a34a','#f59e0b','#dc2626','#94a3b8','#475569']},text:sv,textposition:'outside'}],layout('מצב',t('status'),'כמות'),pc);
+  if(sk.length)Plotly.newPlot('chartStatusDist',[{type:'bar',x:sk.map(statusLabel),y:sv,marker:{color:['#16a34a','#f59e0b','#dc2626','#94a3b8','#475569']},text:sv,textposition:'outside'}],layout('Status',t('status'),'Count'),pc);
   /* 6 – Heatmap layer × status */
   const statuses=['טוב','כשיר','חולה','מת','לא ידוע'];
   const zData=lks.map(lk=>statuses.map(sv=>(feats[lk]||[]).filter(f=>statusKey(f.properties.status)===sv).length));
   if(zData.some(row=>row.some(v=>v>0)))
-    Plotly.newPlot('chartHeatLayer',[{type:'heatmap',z:zData,x:statuses.map(statusLabel),y:lks.map(lk=>lh(LAYER_META[lk].name_he,LAYER_META[lk].name_en)),colorscale:'YlGn',showscale:true}],layout('מטריצת מצב × שכבה',t('status'),t('layer')),pc);
+    Plotly.newPlot('chartHeatLayer',[{type:'heatmap',z:zData,x:statuses.map(statusLabel),y:lks.map(lk=>lh(LAYER_META[lk].name_he,LAYER_META[lk].name_en)),colorscale:'YlGn',showscale:true}],layout('Status × Layer Matrix',t('status'),t('layer')),pc);
   /* 7 – Scatter height vs girth */
   const scH=[],scG=[],scT=[];
   mainFeats.forEach(f=>{if(f.properties.height>0&&f.properties.circumference_trunk>0){scH.push(f.properties.height);scG.push(f.properties.circumference_trunk);scT.push(tf?f.properties[tf]||'':'');}});
   const scTypes=[...new Set(scT)];
   const scTraces=scTypes.slice(0,8).map((tv,i)=>{const idx=scT.map((v,j)=>v===tv?j:-1).filter(j=>j>=0);return{type:'scatter',mode:'markers',name:typeValueLabel(tv,mainLk),x:idx.map(j=>scH[j]),y:idx.map(j=>scG[j]),marker:{color:TYPE_COLORS[i%TYPE_COLORS.length],size:5,opacity:0.6}};});
-  if(scTraces.length)Plotly.newPlot('chartScatterHG',scTraces,layout('גובה vs. היקף גזע','גובה (ס"מ)','היקף (ס"מ)'),pc);
+  if(scTraces.length)Plotly.newPlot('chartScatterHG',scTraces,layout('Height vs. Trunk Girth','Height (cm)','Girth (cm)'),pc);
   /* 8 – Violin */
-  const vTraces=topTypes.slice(0,6).map((tv,i)=>({type:'violin',y:mainFeats.filter(f=>(tf?f.properties[tf]||'ללא שם':'–')===tv).map(f=>f.properties.height).filter(v=>v&&v>0&&v<5000),name:typeValueLabel(tv,mainLk),box:{visible:true},meanline:{visible:true},marker:{color:TYPE_COLORS[i%TYPE_COLORS.length]}})).filter(t=>t.y.length>0);
-  if(vTraces.length)Plotly.newPlot('chartViolinH',vTraces,layout('גובה (ויולין) לפי סוג','סוג','גובה (ס"מ)'),pc);
+  const vTraces=topTypes.slice(0,6).map((tv,i)=>({type:'violin',y:mainFeats.filter(f=>(tf?f.properties[tf]||'ללא שם':NOT_AVAILABLE_LABEL)===tv).map(f=>f.properties.height).filter(v=>v&&v>0&&v<5000),name:typeValueLabel(tv,mainLk),box:{visible:true},meanline:{visible:true},marker:{color:TYPE_COLORS[i%TYPE_COLORS.length]}})).filter(t=>t.y.length>0);
+  if(vTraces.length)Plotly.newPlot('chartViolinH',vTraces,layout('Height (Violin) by Type','Type','Height (cm)'),pc);
 }
 
 function updateAnalytics(){
@@ -2035,12 +2277,12 @@ function updateAdvanced(){
   const gSort=fieldArr('fruit','circumference_trunk').filter(v=>v>0&&v<2000).sort((a,b)=>a-b);
   if(hSort.length){
     Plotly.newPlot('chartCDF',[
-      {type:'scatter',x:hSort,y:hSort.map((_,i)=>(i+1)/hSort.length),mode:'lines',name:'גובה',line:{color:'#2563eb',width:2}},
-      {type:'scatter',x:gSort,y:gSort.map((_,i)=>(i+1)/gSort.length),mode:'lines',name:'היקף',line:{color:'#059669',width:2},xaxis:'x2'},
+      {type:'scatter',x:hSort,y:hSort.map((_,i)=>(i+1)/hSort.length),mode:'lines',name:'Height',line:{color:'#2563eb',width:2}},
+      {type:'scatter',x:gSort,y:gSort.map((_,i)=>(i+1)/gSort.length),mode:'lines',name:'Girth',line:{color:'#059669',width:2},xaxis:'x2'},
     ],{
-      title:{text:'CDF – גובה (כחול) והיקף (ירוק) — עצי פרי',font:{size:13}},
-      xaxis:{title:'גובה (ס"מ)',automargin:true},
-      xaxis2:{title:'היקף (ס"מ)',overlaying:'x',side:'top',showgrid:false,automargin:true},
+      title:{text:'CDF – Height (blue) and Girth (green) — Orchard Fruit Trees',font:{size:13}},
+      xaxis:{title:'Height (cm)',automargin:true},
+      xaxis2:{title:'Girth (cm)',overlaying:'x',side:'top',showgrid:false,automargin:true},
       yaxis:{title:'F(x)'},
       margin:{t:44,b:44,l:48,r:12},paper_bgcolor:'transparent',plot_bgcolor:'#f8fafc',
       legend:{orientation:'h',y:-0.3},
@@ -2055,8 +2297,8 @@ function updateAdvanced(){
     const gini=(1-2*ly.reduce((s,v,i)=>s+(ly[i-1]!=null?(v+ly[i-1])*(lx[i]-(lx[i-1]||0)):0),0)).toFixed(3);
     Plotly.newPlot('chartLorenz',[
       {type:'scatter',x:lx,y:ly,mode:'lines',name:'Lorenz',line:{color:'#dc2626',width:2}},
-      {type:'scatter',x:[0,1],y:[0,1],mode:'lines',name:'שוויון מוחלט',line:{color:'#94a3b8',dash:'dash'}},
-    ],layout('עקומת Lorenz – גובה עצי פרי  |  Gini ≈ '+gini,'Cum. % עצים','Cum. % גובה'),cfgPlot());
+      {type:'scatter',x:[0,1],y:[0,1],mode:'lines',name:'Perfect Equality',line:{color:'#94a3b8',dash:'dash'}},
+    ],layout('Lorenz Curve – Orchard Fruit Tree Height  |  Gini ≈ '+gini,'Cum. % Trees','Cum. % Height'),cfgPlot());
   }
 
   /* Species richness per district (replaces naive area chart) */
@@ -2074,10 +2316,10 @@ function updateAdvanced(){
     .sort((a,b)=>nafaSpecies[b].species.size-nafaSpecies[a].species.size).slice(0,15);
   if(richSorted.length){
     Plotly.newPlot('chartBustanProfile',[
-      {type:'bar',name:lh('עצי פרי','Fruit Trees'),y:richSorted.map(nafaLabel),x:richSorted.map(n=>nafaSpecies[n].fruit?.size||0),orientation:'h',marker:{color:'#16a34a'}},
-      {type:'bar',name:lh('עצי סרק','Non-Fruit Trees'),y:richSorted.map(nafaLabel),x:richSorted.map(n=>nafaSpecies[n].carob?.size||0),orientation:'h',marker:{color:'#8b6f47'}},
-      {type:'bar',name:lh('צמחיה','Vegetation'),y:richSorted.map(nafaLabel),x:richSorted.map(n=>nafaSpecies[n].vegetation?.size||0),orientation:'h',marker:{color:'#65a30d'}},
-    ],layout('עושר מינים לפי נפה (מינים ייחודיים)','מינים ייחודיים','נפה',{barmode:'stack'}),cfgPlot());
+      {type:'bar',name:lh('עצי פרי','Orchard Fruit Trees'),y:richSorted.map(nafaLabel),x:richSorted.map(n=>nafaSpecies[n].fruit?.size||0),orientation:'h',marker:{color:'#16a34a'}},
+      {type:'bar',name:lh('עצי סרק','Non-Orchard / Wild Tree Records'),y:richSorted.map(nafaLabel),x:richSorted.map(n=>nafaSpecies[n].carob?.size||0),orientation:'h',marker:{color:'#8b6f47'}},
+      {type:'bar',name:lh('צמחיה','Non-Orchard Trees'),y:richSorted.map(nafaLabel),x:richSorted.map(n=>nafaSpecies[n].vegetation?.size||0),orientation:'h',marker:{color:'#65a30d'}},
+    ],layout('Species Richness by District (Unique Types)','Unique Types','District',{barmode:'stack'}),cfgPlot());
   }
 
   /* Correlation – height vs girth with regression line */
@@ -2086,12 +2328,12 @@ function updateAdvanced(){
   const maxL=Math.min(cH.length,cG.length);
   if(maxL>10){
     const reg=linearReg(cH.slice(0,maxL),cG.slice(0,maxL));
-    const regTraces=[{type:'scatter',mode:'markers',name:'מדידות',x:cH.slice(0,maxL),y:cG.slice(0,maxL),marker:{color:'#7c3aed',size:4,opacity:0.5}}];
+    const regTraces=[{type:'scatter',mode:'markers',name:'Samples',x:cH.slice(0,maxL),y:cG.slice(0,maxL),marker:{color:'#7c3aed',size:4,opacity:0.5}}];
     if(reg){
       const xs=[Math.min(...cH.slice(0,maxL)),Math.max(...cH.slice(0,maxL))];
-      regTraces.push({type:'scatter',mode:'lines',name:`קו מגמה (y=${reg.slope.toFixed(2)}x${reg.intercept>=0?'+':''} ${reg.intercept.toFixed(0)})`,x:xs,y:xs.map(x=>reg.slope*x+reg.intercept),line:{color:'#dc2626',width:2,dash:'dot'}});
+      regTraces.push({type:'scatter',mode:'lines',name:`Trend Line (y=${reg.slope.toFixed(2)}x${reg.intercept>=0?'+':''} ${reg.intercept.toFixed(0)})`,x:xs,y:xs.map(x=>reg.slope*x+reg.intercept),line:{color:'#dc2626',width:2,dash:'dot'}});
     }
-    Plotly.newPlot('chartCorrelation',regTraces,layout('מתאם גובה – היקף גזע (פרי) + קו מגמה','גובה (ס"מ)','היקף (ס"מ)'),cfgPlot());
+    Plotly.newPlot('chartCorrelation',regTraces,layout('Height-Girth Correlation (Orchard Fruit Trees) + Trend Line','Height (cm)','Girth (cm)'),cfgPlot());
   }
 
   /* Grouped bar: type counts by layer */
@@ -2100,12 +2342,12 @@ function updateAdvanced(){
   Plotly.newPlot('chartTypeByBustan',lks3.map((lk,i)=>{
     const dist=typeDist(lk);
     return{type:'bar',name:lh(LAYER_META[lk].name_he,LAYER_META[lk].name_en),x:allTypesMerged.map(tv=>typeValueLabel(tv,'fruit')),y:allTypesMerged.map(tv=>dist[tv]||0),marker:{color:LAYER_META[lk].color}};
-  }),layout('התפלגות סוגים לפי שכבה','סוג','כמות',{barmode:'group'}),cfgPlot());
+  }),layout('Type Distribution by Layer','Type','Count',{barmode:'group'}),cfgPlot());
 
   /* Size class by girth – with estimated age annotation */
   const gAll=fieldArr('fruit','circumference_trunk').filter(v=>v>0&&v<2000);
   const classes=['0–30','30–60','60–100','100–150','150–300','>300'];
-  const ageHints=['שתיל / צעיר (~1–5 שנים)','גדילה (~5–15)','מבוגר (~15–30)','זקן (~30–60)','עתיק (~60–120)','עתיק מאוד (>120)'];
+  const ageHints=['Seedling / Young (~1-5 years)','Growth (~5-15)','Mature (~15-30)','Old (~30-60)','Ancient (~60-120)','Very Ancient (>120)'];
   const bounds=[[0,30],[30,60],[60,100],[100,150],[150,300],[300,9999]];
   const cnts=bounds.map(([mn,mx])=>gAll.filter(v=>v>=mn&&v<mx).length);
   Plotly.newPlot('chartSizeClass',[{
@@ -2115,12 +2357,12 @@ function updateAdvanced(){
     textposition:'inside',textfont:{size:9},
     hovertext:cnts.map((c,i)=>classes[i]+': '+c+' – '+ageHints[i]),
     hoverinfo:'text',
-  }],layout('מחלקות היקף גזע – הערכת גיל (עצי פרי)','מחלקה גזע (ס"מ)','כמות Esri עצים'),cfgPlot());
+  }],layout('Trunk Girth Classes – Age Estimate (Orchard Fruit Trees)','Girth Class (cm)','Tree Count'),cfgPlot());
 
   /* Treemap */
   const td2=typeDist('fruit');
   const tdK=Object.keys(td2),tdV=tdK.map(k=>td2[k]);
-  Plotly.newPlot('chartTreemapTypes',[{type:'treemap',labels:tdK.map(tv=>typeValueLabel(tv,'fruit')),parents:tdK.map(()=>''),values:tdV,textinfo:'label+value+percent parent',marker:{colors:tdK.map((_,i)=>TYPE_COLORS[i%TYPE_COLORS.length])}}],{title:{text:'Treemap: סוגי עצי פרי',font:{size:13}},margin:{t:32,b:4,l:4,r:4}},cfgPlot());
+  Plotly.newPlot('chartTreemapTypes',[{type:'treemap',labels:tdK.map(tv=>typeValueLabel(tv,'fruit')),parents:tdK.map(()=>''),values:tdV,textinfo:'label+value+percent parent',marker:{colors:tdK.map((_,i)=>TYPE_COLORS[i%TYPE_COLORS.length])}}],{title:{text:'Treemap: Orchard Fruit Tree Types',font:{size:13}},margin:{t:32,b:4,l:4,r:4}},cfgPlot());
 
   /* Radar status */
   const rLayers=['fruit','carob','vegetation'];
@@ -2128,7 +2370,7 @@ function updateAdvanced(){
   Plotly.newPlot('chartRadarStatus',rLayers.map((lk,i)=>{
     const vals=rSt.map(sv=>(allFeats[lk]||[]).filter(f=>statusKey(f.properties.status)===sv).length);
     return{type:'scatterpolar',r:[...vals,vals[0]],theta:[...rSt.map(statusLabel),statusLabel(rSt[0])],fill:'toself',name:lh(LAYER_META[lk].name_he,LAYER_META[lk].name_en),marker:{color:LAYER_META[lk].color},opacity:0.6};
-  }),{title:{text:'רדאר מצבי אובייקטים לפי שכבה',font:{size:13}},polar:{radialaxis:{visible:true}},margin:{t:36,b:20,l:20,r:20}},cfgPlot());
+  }),{title:{text:'Object Status Radar by Layer',font:{size:13}},polar:{radialaxis:{visible:true}},margin:{t:36,b:20,l:20,r:20}},cfgPlot());
 }
 
 /* ── Compare ────────────────────────────────────────────── */
@@ -2282,7 +2524,7 @@ function localizeChartText(txt){
     ['כמות','Count'],['שכבה','Layer'],['שכבות','Layers'],['סוג','Type'],['סוגים','Types'],
     ['ממוצע','Mean'],['חציון','Median'],['סטיית תקן','Std Dev'],['מינ׳','Min'],['מקס׳','Max'],
     ['נפה','District'],['נפות','Districts'],['מינים','Species'],['מין','Species'],
-    ['מצב','Status'],['עצי פרי','Fruit Trees'],['עצי סרק','Non-Fruit Trees'],['צמחיה','Vegetation'],
+    ['מצב','Status'],['עצי פרי','Orchard Fruit Trees'],['עצי סרק','Non-Orchard / Wild Tree Records'],['צמחיה','Non-Orchard Trees'],
     ['השוואת','Comparison'],['רדאר','Radar'],['גובה vs. היקף','Height vs. Girth'],
     ['עקומת','Curve'],['מחלקות','Classes'],['הערכת גיל','Age Estimate']
   ];
@@ -2303,6 +2545,103 @@ function layout(title,xLabel='',yLabel='',extra={}){
   },extra);
 }
 function cfgPlot(){return{responsive:true,displayModeBar:false};}
+
+const CHART_HELP = {
+  chartOverviewBar:'Shows total object counts by layer.',
+  chartOverviewPie:'Shows orchard fruit tree composition by type.',
+  chartDistrictStack:'Compares layer counts by district (stacked bars).',
+  chartDistrictHeatmap:'Heatmap of orchard fruit tree types by district.',
+  chartDistrictPie:'Share of orchard fruit trees across top districts.',
+  chartDistrictSpeciesBar:'Top species composition inside selected district.',
+  chartDistrictSpeciesBox:'Height spread by top species in selected district.',
+  chartDistrictSpeciesHist:'Height distribution for selected species.',
+  chartDistrictSpeciesGirth:'Girth distribution for selected species.',
+  chartDistrictSpeciesStatus:'Status mix for selected species.',
+  chartSpeciesCmpBox:'Box plots comparing selected species metrics.',
+  chartSpeciesCmpBar:'Mean and median metric comparison.',
+  chartSpeciesHeightHist:'Height distribution for selected species.',
+  chartSpeciesGirthHist:'Girth distribution for selected species.',
+  chartSpeciesStatus:'Status share for selected species.',
+  chartSpeciesNafot:'Selected species distribution by district.',
+  chartSpeciesBoxNafot:'Height distribution by district for selected species.',
+  chartTypeDist:'Type composition under current analytics filters.',
+  chartHeightDist:'Height distribution under current filters.',
+  chartGirthDist:'Girth distribution under current filters.',
+  chartHeightBox:'Height spread by type under current filters.',
+  chartStatusDist:'Status counts under current filters.',
+  chartHeatLayer:'Status-by-layer matrix under filters.',
+  chartScatterHG:'Height-to-girth relationship.',
+  chartViolinH:'Violin distribution of heights by type.',
+  chartCDF:'CDF curves for orchard fruit tree size metrics.',
+  chartLorenz:'Lorenz curve for orchard fruit tree height inequality.',
+  chartBustanProfile:'Species richness by district.',
+  chartCorrelation:'Height-girth correlation with trend line.',
+  chartTypeByBustan:'Type counts by layer.',
+  chartSizeClass:'Tree-size classes with rough age hints.',
+  chartTreemapTypes:'Treemap of orchard fruit tree type share.',
+  chartRadarStatus:'Layer-level status profile radar chart.',
+  cmpChartBar:'Mean metric comparison between Side A and Side B.',
+  cmpChartRadar:'Normalized radar comparison between Side A and Side B.',
+  cmpChartBox:'Height box comparison between Side A and Side B.',
+  cmpChartHist:'Height histogram comparison between Side A and Side B.',
+  cmpChartScatter:'Height-girth scatter comparison for both sides.',
+  chartBustanZones:'Area by type within selected historical orchard.'
+};
+
+function chartTitleFromId(id){
+  return id.replace(/^chart/,'').replace(/^cmpChart/,'Compare ').replace(/([A-Z])/g,' $1').trim();
+}
+
+function ensureChartHelpModal(){
+  if(document.getElementById('chartHelpOverlay'))return;
+  const html=`
+    <div id="chartHelpOverlay" class="chart-help-overlay" role="dialog" aria-modal="true" aria-labelledby="chartHelpTitle">
+      <div class="chart-help-modal">
+        <button id="chartHelpClose" class="chart-help-close" aria-label="Close help">×</button>
+        <h3 id="chartHelpTitle" class="chart-help-title"></h3>
+        <div id="chartHelpBody" class="chart-help-body"></div>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend',html);
+  const overlay=document.getElementById('chartHelpOverlay');
+  const closeBtn=document.getElementById('chartHelpClose');
+  const close=()=>{
+    overlay.classList.remove('open');
+    if(overlay._lastBtn)overlay._lastBtn.focus();
+  };
+  closeBtn.addEventListener('click',close);
+  overlay.addEventListener('click',e=>{if(e.target===overlay)close();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))close();});
+}
+
+function openChartHelp(chartId,btn){
+  const overlay=document.getElementById('chartHelpOverlay');
+  const titleEl=document.getElementById('chartHelpTitle');
+  const bodyEl=document.getElementById('chartHelpBody');
+  titleEl.textContent=chartTitleFromId(chartId);
+  bodyEl.textContent=CHART_HELP[chartId] || 'This chart summarizes filtered records from the current view.';
+  overlay._lastBtn=btn;
+  overlay.classList.add('open');
+  document.getElementById('chartHelpClose').focus();
+}
+
+function initChartHelpUI(){
+  ensureChartHelpModal();
+  const chartEls=[...document.querySelectorAll('[id^="chart"], [id^="cmpChart"]')];
+  chartEls.forEach(el=>{
+    if(el._helpBound)return;
+    el._helpBound=true;
+    el.classList.add('chart-host');
+    const btn=document.createElement('button');
+    btn.type='button';
+    btn.className='chart-info-btn';
+    btn.setAttribute('aria-label','Chart help');
+    btn.title='Chart help';
+    btn.textContent='i';
+    btn.addEventListener('click',()=>openChartHelp(el.id,btn));
+    el.appendChild(btn);
+  });
+}
 
 /* ── Search ─────────────────────────────────────────────── */
 function setupSearch(){
@@ -2358,18 +2697,18 @@ function applyLang(){
   setTxt('tabCompare',t('compare'));
   setTxt('tabBustans',t('bustans'));
   document.getElementById('kLbl1').textContent=t('fruit_trees');
-  document.getElementById('kLbl2').textContent=t('carob_trees');
+  document.getElementById('kLbl2').textContent=t('vegetation');
   document.getElementById('kLbl3').textContent=t('nafot');
-  document.getElementById('kLbl4').textContent=t('vegetation');
-  document.getElementById('kLbl5').textContent=t('ag_tools');
-  document.getElementById('kLbl6').textContent=t('terraces');
+  document.getElementById('kLbl4').textContent=t('ag_tools');
+  document.getElementById('kLbl5').textContent=t('carob_trees');
+  document.getElementById('kLbl6').textContent=lh('טרסות (שכבת מקור)','Terraces (source layer)');
   document.getElementById('kLbl7').textContent=t('avg_height_fruit');
   document.getElementById('kLbl8').textContent=t('avg_girth_fruit');
   document.getElementById('kLbl9').textContent=t('fruit_type_count');
   setTxt('districtsIntro',t('districts_intro'));
   setTxt('distGrpAll',t('grp_all'));
   setTxt('distGrpFruit',t('fruit_trees'));
-  setTxt('distGrpCarob',t('carob_trees'));
+  setTxt('distGrpCarob',lh('רשומות מקור אופציונליות','Optional Source Layer'));
   setTxt('distGrpVegetation',t('vegetation'));
   setTxt('districtDrillHint',t('click_species_detail'));
   setTxt('districtsAddHint',t('districts_add_hint'));
@@ -2382,12 +2721,15 @@ function applyLang(){
   setTxt('speciesGroupCarob',t('carob_trees'));
   setTxt('speciesGroupVegetation',t('vegetation'));
   const speciesSearch=document.getElementById('speciesSearch');
-  if(speciesSearch)speciesSearch.placeholder=lh('חפש מין...','Search species...');
+  if(speciesSearch)speciesSearch.placeholder=lh('חפש מין...','Search orchard fruit tree...');
   setTxt('btnOpenSpeciesCmp',t('species_compare_toggle_open'));
   setTxt('speciesCmpTitle',t('species_compare'));
   setTxt('speciesCmpLblA',t('species_a'));
   setTxt('speciesCmpLblB',t('species_b'));
+  setTxt('speciesCmpDistrictLbl',t('district_opt'));
   setTxt('btnRunSpeciesCmp',t('compare_btn'));
+  const spDist=document.getElementById('speciesCmpDistrict');
+  if(spDist&&spDist.options.length){spDist.options[0].textContent='All districts';}
 
   setTxt('analyticsLblGroup',t('filter_group'));
   setTxt('analyticsLblSpecies',t('filter_species_ac'));
@@ -2397,7 +2739,7 @@ function applyLang(){
   setTxt('analyticsGroupCarob',t('carob_trees'));
   setTxt('analyticsGroupVegetation',t('vegetation'));
   const afs=document.getElementById('analyticsFilterSpecies');
-  if(afs)afs.placeholder=lh('הקלד מין...','Type species...');
+  if(afs)afs.placeholder=lh('הקלד מין...','Type orchard fruit tree...');
   setTxt('btnAnalyticsApply',t('apply'));
   setTxt('btnAnalyticsReset',t('reset'));
   setTxt('advancedIntro',t('advanced_intro'));
@@ -2438,10 +2780,80 @@ function applyLang(){
 
 function setStatus(msg){document.getElementById('statusText').textContent=msg;}
 
+function setupSidebarResize(){
+  const mainEl=document.querySelector('main');
+  const handleEl=document.getElementById('sideResizeHandle');
+  if(!mainEl||!handleEl)return;
+
+  const isDesktop=()=>window.matchMedia('(min-width: 901px)').matches;
+  const clampWidth=rawWidth=>{
+    const minWidth=260;
+    const mainWidth=Math.floor(mainEl.getBoundingClientRect().width||0);
+    const maxWidth=Math.max(minWidth+40,Math.min(700,Math.floor(mainWidth*0.65)));
+    return Math.max(minWidth,Math.min(maxWidth,Math.round(rawWidth)));
+  };
+  const applyWidth=rawWidth=>{
+    if(!isDesktop())return null;
+    const width=clampWidth(rawWidth);
+    document.documentElement.style.setProperty('--side-width',width+'px');
+    return width;
+  };
+  const refreshMap=()=>{
+    if(map)map.invalidateSize(false);
+  };
+
+  let currentWidth=parseInt(localStorage.getItem(SIDEBAR_WIDTH_STORAGE_KEY),10);
+  if(!Number.isFinite(currentWidth))currentWidth=300;
+  applyWidth(currentWidth);
+
+  let activePointerId=null;
+  const onPointerMove=e=>{
+    if(activePointerId!==e.pointerId)return;
+    const rect=mainEl.getBoundingClientRect();
+    const handleWidth=handleEl.getBoundingClientRect().width||8;
+    const wantedWidth=rect.right-e.clientX-(handleWidth/2);
+    const applied=applyWidth(wantedWidth);
+    if(applied!=null){
+      currentWidth=applied;
+      refreshMap();
+    }
+  };
+  const onPointerUp=e=>{
+    if(activePointerId!==e.pointerId)return;
+    activePointerId=null;
+    handleEl.classList.remove('dragging');
+    document.body.classList.remove('is-resizing');
+    window.removeEventListener('pointermove',onPointerMove);
+    window.removeEventListener('pointerup',onPointerUp);
+    localStorage.setItem(SIDEBAR_WIDTH_STORAGE_KEY,String(currentWidth));
+    refreshMap();
+  };
+
+  handleEl.addEventListener('pointerdown',e=>{
+    if(!isDesktop())return;
+    activePointerId=e.pointerId;
+    handleEl.classList.add('dragging');
+    document.body.classList.add('is-resizing');
+    window.addEventListener('pointermove',onPointerMove);
+    window.addEventListener('pointerup',onPointerUp);
+  });
+
+  window.addEventListener('resize',()=>{
+    if(isDesktop()){
+      const applied=applyWidth(currentWidth);
+      if(applied!=null)currentWidth=applied;
+    }else{
+      document.documentElement.style.removeProperty('--side-width');
+    }
+    refreshMap();
+  });
+}
+
 /* ── main ────────────────────────────────────────────────── */
 async function init(){
   applyLang();
   initMap();
+  setupSidebarResize();
   loadCustomNafotFromStorage();
 
   document.getElementById('btnFloatToggle').addEventListener('click',e=>{
@@ -2453,6 +2865,12 @@ async function init(){
   document.getElementById('basemapSel').addEventListener('change',e=>setBasemap(e.target.value));
   document.getElementById('btnShowAll').addEventListener('click',()=>{
     LAYER_KEYS.forEach(lk=>{layerVis[lk]=true;});
+    displayGroupVis={
+      orchardFruitTrees:true,
+      nonOrchardTrees:true,
+      agriculturalInstallations:true,
+      optionalSourceLayers:true,
+    };
     LAYER_KEYS.forEach(lk=>{typeVis[lk]={};});
     clearMapProjection(true);
     buildLayerToggles();
@@ -2507,6 +2925,7 @@ async function init(){
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&photoPopup)photoPopup.style.display='none';});
 
   setupTabs();
+  initChartHelpUI();
   setupSearch();
   /* Bustan search live filter */
   const bustanSearchEl=document.getElementById('bustanSearch');
