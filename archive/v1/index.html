@@ -25,17 +25,17 @@
   <div class="float" id="floatPanel">
     <div class="float-header">
       <h4 id="floatTitle">Layers &amp; Map</h4>
-      <button id="btnFloatToggle" class="float-toggle collapsed" title="Collapse / Expand" aria-expanded="false">▲</button>
+      <button id="btnFloatToggle" class="float-toggle" title="Collapse / Expand" aria-expanded="true">▲</button>
     </div>
-    <div id="floatBody" class="collapsed">
+    <div id="floatBody">
     <select id="basemapSel">
       <optgroup label="Base Maps" id="bmGroupBase" data-label-he="מפות בסיס" data-label-en="Base Maps">
         <option value="osm">OSM Modern</option>
-        <option value="sat" selected>Satellite (Esri)</option>
+        <option value="sat">Satellite (Esri)</option>
       </optgroup>
       <optgroup label="Palestine Open Maps">
         <option value="pal20k">POM 1:20k (1940s)</option>
-        <option value="pal-1940s">POM Combined (1940s)</option>
+        <option value="pal-1940s" selected>POM Combined (1940s)</option>
         <option value="pal100k">POM 1:100k (1950s)</option>
         <option value="pal250k">POM 1:250k (1946)</option>
         <option value="pal63k">POM 1:63k PEF (1880)</option>
@@ -67,14 +67,12 @@
   </div><!-- /floatPanel -->
 </div><!-- /mapWrap -->
 
-<div id="sideResizeHandle" role="separator" aria-orientation="vertical" aria-label="Resize sidebar"></div>
-
 <div id="side">
   <div class="tabs" id="tabsBar">
     <button class="tabbtn active" data-tab="overview" id="tabOverview">Overview</button>
-    <button class="tabbtn" data-tab="bustans" id="tabBustans">Historical Orchard</button>
+    <button class="tabbtn" data-tab="bustans" id="tabBustans">Bustans</button>
     <button class="tabbtn" data-tab="districts" id="tabDistricts">Districts</button>
-    <button class="tabbtn" data-tab="species" id="tabSpecies">Orchard Fruit Trees</button>
+    <button class="tabbtn" data-tab="species" id="tabSpecies">Species</button>
     <button class="tabbtn" data-tab="analytics" id="tabAnalytics">Analytics</button>
     <button class="tabbtn" data-tab="advanced" id="tabAdvanced">Advanced</button>
     <button class="tabbtn" data-tab="compare" id="tabCompare">Compare</button>
@@ -83,15 +81,15 @@
   <!-- === TAB: Overview === -->
   <div class="panel tab active" id="overview">
     <div class="kpis">
-      <div class="kpi"><div class="label" id="kLbl1">Orchard Fruit Trees</div><div class="v" id="kFruitTrees"></div></div>
-      <div class="kpi"><div class="label" id="kLbl2">Non-Orchard Trees</div><div class="v" id="kCarobTrees"></div></div>
+      <div class="kpi"><div class="label" id="kLbl1">Fruit Trees</div><div class="v" id="kFruitTrees"></div></div>
+      <div class="kpi"><div class="label" id="kLbl2">Non-Fruit Trees</div><div class="v" id="kCarobTrees"></div></div>
       <div class="kpi"><div class="label" id="kLbl3">Districts</div><div class="v" id="kNafot"></div></div>
-      <div class="kpi"><div class="label" id="kLbl4">Agricultural Installations</div><div class="v" id="kVegetation"></div></div>
-      <div class="kpi"><div class="label" id="kLbl5">Non-Orchard / Wild Tree Records</div><div class="v" id="kAgTools"></div></div>
-      <div class="kpi"><div class="label" id="kLbl6">Terraces (source layer)</div><div class="v" id="kTerraces"></div></div>
-      <div class="kpi"><div class="label" id="kLbl7">Avg. Height (Orchard Fruit Trees)</div><div class="v" id="kAvgH"></div></div>
-      <div class="kpi"><div class="label" id="kLbl8">Avg. Girth (Orchard Fruit Trees)</div><div class="v" id="kAvgG"></div></div>
-      <div class="kpi"><div class="label" id="kLbl9">Orchard Fruit Tree Types</div><div class="v" id="kFruitTypes"></div></div>
+      <div class="kpi"><div class="label" id="kLbl4">Vegetation</div><div class="v" id="kVegetation"></div></div>
+      <div class="kpi"><div class="label" id="kLbl5">Agr. Tools</div><div class="v" id="kAgTools"></div></div>
+      <div class="kpi"><div class="label" id="kLbl6">Terraces</div><div class="v" id="kTerraces"></div></div>
+      <div class="kpi"><div class="label" id="kLbl7">Avg. Height (Fruit Trees)</div><div class="v" id="kAvgH"></div></div>
+      <div class="kpi"><div class="label" id="kLbl8">Avg. Girth (Fruit Trees)</div><div class="v" id="kAvgG"></div></div>
+      <div class="kpi"><div class="label" id="kLbl9">Fruit Tree Types</div><div class="v" id="kFruitTypes"></div></div>
     </div>
     <div id="selectionDetail"></div>
     <div id="chartOverviewBar" class="chart"></div>
@@ -100,7 +98,7 @@
 
   <!-- === TAB: Districts (Nafot) === -->
   <div class="panel tab" id="districts">
-    <div class="small mb8" id="districtsIntro">Object counts by modern Israeli administrative districts. Click a row to focus the map. This view is an administrative spatial summary, not a historical or ecological regional classification.</div>
+    <div class="small mb8" id="districtsIntro">Object analysis by Israeli districts &mdash; click a row to focus. Districts are also shown on the map in cyan.</div>
     <div id="districtList" style="overflow-y:auto;max-height:280px"></div>
     <div class="small mt8" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
       <span id="districtsAddHint">Add polygon:</span>
@@ -120,11 +118,11 @@
       </div>
       <div class="grp-btn-bar">
         <button class="grp-btn active" data-grp="" id="distGrpAll">All</button>
-        <button class="grp-btn" data-grp="fruit" id="distGrpFruit">Orchard Fruit Trees</button>
-        <button class="grp-btn" data-grp="carob" id="distGrpCarob">Optional Source Layer</button>
-        <button class="grp-btn" data-grp="vegetation" id="distGrpVegetation">Non-Orchard Trees</button>
+        <button class="grp-btn" data-grp="fruit" id="distGrpFruit">Fruit Trees</button>
+        <button class="grp-btn" data-grp="carob" id="distGrpCarob">Non-Fruit Trees</button>
+        <button class="grp-btn" data-grp="vegetation" id="distGrpVegetation">Vegetation</button>
       </div>
-      <div class="small mb8" id="districtDrillHint">Click an orchard fruit tree name for detailed analysis</div>
+      <div class="small mb8" id="districtDrillHint">Click a species name for detailed analysis</div>
       <div id="districtSpeciesTable" style="overflow-x:auto;overflow-y:auto;max-height:240px"></div>
       <div id="chartDistrictSpeciesBar" class="chartTall"></div>
       <div id="chartDistrictSpeciesBox" class="chartTall"></div>
@@ -141,30 +139,29 @@
     </div>
   </div>
 
-  <!-- === TAB: Orchard Fruit Trees === -->
+  <!-- === TAB: Species === -->
   <div class="panel tab" id="species">
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
       <select id="speciesFilterLayer" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px">
         <option value="" id="speciesGroupAll">All Groups</option>
-        <option value="fruit" id="speciesGroupFruit">Orchard Fruit Trees</option>
-        <option value="carob" id="speciesGroupCarob">Non-Orchard / Wild Tree Records</option>
-        <option value="vegetation" id="speciesGroupVegetation">Non-Orchard Trees</option>
+        <option value="fruit" id="speciesGroupFruit">Fruit Trees</option>
+        <option value="carob" id="speciesGroupCarob">Non-Fruit Trees</option>
+        <option value="vegetation" id="speciesGroupVegetation">Vegetation</option>
       </select>
-      <input type="text" id="speciesSearch" placeholder="Search orchard fruit tree..." style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px" />
+      <input type="text" id="speciesSearch" placeholder="Search species..." style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px" />
     </div>
     <div class="small mb8" id="speciesCount"></div>
     <div id="speciesTable" style="overflow-x:auto;overflow-y:auto;max-height:280px"></div>
-    <button id="btnOpenSpeciesCmp" style="padding:6px 14px;border:1px solid var(--primary);border-radius:8px;background:#fff;color:var(--primary);cursor:pointer;font-size:12px;font-weight:600;margin-bottom:8px">Orchard Fruit Tree Comparison ▾</button>
-    <!-- Orchard fruit tree comparison panel -->
+    <button id="btnOpenSpeciesCmp" style="padding:6px 14px;border:1px solid var(--primary);border-radius:8px;background:#fff;color:var(--primary);cursor:pointer;font-size:12px;font-weight:600;margin-bottom:8px">Species Comparison ▾</button>
+    <!-- Species comparison panel -->
     <div id="speciesCmpPanel" style="display:none;background:#f8fafc;border:1px solid var(--primary);border-radius:10px;padding:14px;margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <h5 style="margin:0;color:var(--primary);font-size:13px" id="speciesCmpTitle">Orchard Fruit Tree Comparison</h5>
+        <h5 style="margin:0;color:var(--primary);font-size:13px" id="speciesCmpTitle">Species Comparison</h5>
         <button id="btnSpeciesCmpClose" style="font-size:12px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:#fff">✕</button>
       </div>
       <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:8px">
-        <div style="flex:1"><div class="small" style="margin-bottom:3px" id="speciesCmpLblA">Orchard Fruit Tree A</div><select id="speciesCmpA" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:8px;font-size:12px"></select></div>
-        <div style="flex:1"><div class="small" style="margin-bottom:3px" id="speciesCmpLblB">Orchard Fruit Tree B</div><select id="speciesCmpB" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:8px;font-size:12px"></select></div>
-        <div style="flex:1"><div class="small" style="margin-bottom:3px" id="speciesCmpDistrictLbl">District</div><select id="speciesCmpDistrict" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:8px;font-size:12px"><option value="">All districts</option></select></div>
+        <div style="flex:1"><div class="small" style="margin-bottom:3px" id="speciesCmpLblA">Species A</div><select id="speciesCmpA" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:8px;font-size:12px"></select></div>
+        <div style="flex:1"><div class="small" style="margin-bottom:3px" id="speciesCmpLblB">Species B</div><select id="speciesCmpB" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:8px;font-size:12px"></select></div>
         <button id="btnRunSpeciesCmp" style="padding:7px 16px;background:var(--primary);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:12px">Compare</button>
       </div>
       <div id="speciesCmpResult"></div>
@@ -191,13 +188,13 @@
       <div><label id="analyticsLblGroup">Group</label>
         <select id="analyticsFilterGroup">
           <option value="" id="analyticsGroupAll">All Groups</option>
-          <option value="fruit" id="analyticsGroupFruit">Orchard Fruit Trees</option>
-          <option value="carob" id="analyticsGroupCarob">Non-Orchard / Wild Tree Records</option>
-          <option value="vegetation" id="analyticsGroupVegetation">Non-Orchard Trees</option>
+          <option value="fruit" id="analyticsGroupFruit">Fruit Trees</option>
+          <option value="carob" id="analyticsGroupCarob">Non-Fruit Trees</option>
+          <option value="vegetation" id="analyticsGroupVegetation">Vegetation</option>
         </select>
       </div>
-      <div style="flex:2"><label id="analyticsLblSpecies">Specific Orchard Fruit Tree (Autocomplete)</label>
-        <input type="text" id="analyticsFilterSpecies" list="analyticsSpeciesList" placeholder="Type orchard fruit tree..." style="width:100%;box-sizing:border-box" />
+      <div style="flex:2"><label id="analyticsLblSpecies">Specific Species (Autocomplete)</label>
+        <input type="text" id="analyticsFilterSpecies" list="analyticsSpeciesList" placeholder="Type species..." style="width:100%;box-sizing:border-box" />
         <datalist id="analyticsSpeciesList"></datalist>
       </div>
       <div style="flex:2"><label id="analyticsLblDistricts">Districts (Ctrl for multi-select)</label>
@@ -266,10 +263,10 @@
     <div id="cmpChartScatter" class="chartTall"></div>
   </div>
 
-  <!-- === TAB: Historical Orchard === -->
+  <!-- === TAB: Bustans === -->
   <div class="panel tab" id="bustans">
-    <div class="small mb8" id="bustansIntro">List of Historical Orchard records — click a record to view details on the map</div>
-    <input type="text" id="bustanSearch" placeholder="Search historical orchard..." style="width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;margin-bottom:8px;box-sizing:border-box" />
+    <div class="small mb8" id="bustansIntro">List of Bustans — click a bustan to view details on map</div>
+    <input type="text" id="bustanSearch" placeholder="Search bustan..." style="width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;margin-bottom:8px;box-sizing:border-box" />
     <div id="bustansList" style="overflow-y:auto;max-height:260px;border:1px solid var(--border);border-radius:8px"></div>
     <div id="bustanDetail" style="display:none;margin-top:14px;border-top:2px solid var(--primary);padding-top:10px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">

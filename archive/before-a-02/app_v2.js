@@ -313,7 +313,6 @@ let displayGroupVis={
   agriculturalInstallations:false,
   optionalSourceLayers:false,
 };
-const SIDEBAR_WIDTH_STORAGE_KEY='bustanim_sidebar_width_v1';
 
 /* ── Statistics helpers ─────────────────────────────────── */
 const fmt  = v => (v==null||isNaN(v)) ? NO_DATA_LABEL : (+v).toLocaleString('en-US',{maximumFractionDigits:1});
@@ -2780,80 +2779,10 @@ function applyLang(){
 
 function setStatus(msg){document.getElementById('statusText').textContent=msg;}
 
-function setupSidebarResize(){
-  const mainEl=document.querySelector('main');
-  const handleEl=document.getElementById('sideResizeHandle');
-  if(!mainEl||!handleEl)return;
-
-  const isDesktop=()=>window.matchMedia('(min-width: 901px)').matches;
-  const clampWidth=rawWidth=>{
-    const minWidth=260;
-    const mainWidth=Math.floor(mainEl.getBoundingClientRect().width||0);
-    const maxWidth=Math.max(minWidth+40,Math.min(700,Math.floor(mainWidth*0.65)));
-    return Math.max(minWidth,Math.min(maxWidth,Math.round(rawWidth)));
-  };
-  const applyWidth=rawWidth=>{
-    if(!isDesktop())return null;
-    const width=clampWidth(rawWidth);
-    document.documentElement.style.setProperty('--side-width',width+'px');
-    return width;
-  };
-  const refreshMap=()=>{
-    if(map)map.invalidateSize(false);
-  };
-
-  let currentWidth=parseInt(localStorage.getItem(SIDEBAR_WIDTH_STORAGE_KEY),10);
-  if(!Number.isFinite(currentWidth))currentWidth=300;
-  applyWidth(currentWidth);
-
-  let activePointerId=null;
-  const onPointerMove=e=>{
-    if(activePointerId!==e.pointerId)return;
-    const rect=mainEl.getBoundingClientRect();
-    const handleWidth=handleEl.getBoundingClientRect().width||8;
-    const wantedWidth=rect.right-e.clientX-(handleWidth/2);
-    const applied=applyWidth(wantedWidth);
-    if(applied!=null){
-      currentWidth=applied;
-      refreshMap();
-    }
-  };
-  const onPointerUp=e=>{
-    if(activePointerId!==e.pointerId)return;
-    activePointerId=null;
-    handleEl.classList.remove('dragging');
-    document.body.classList.remove('is-resizing');
-    window.removeEventListener('pointermove',onPointerMove);
-    window.removeEventListener('pointerup',onPointerUp);
-    localStorage.setItem(SIDEBAR_WIDTH_STORAGE_KEY,String(currentWidth));
-    refreshMap();
-  };
-
-  handleEl.addEventListener('pointerdown',e=>{
-    if(!isDesktop())return;
-    activePointerId=e.pointerId;
-    handleEl.classList.add('dragging');
-    document.body.classList.add('is-resizing');
-    window.addEventListener('pointermove',onPointerMove);
-    window.addEventListener('pointerup',onPointerUp);
-  });
-
-  window.addEventListener('resize',()=>{
-    if(isDesktop()){
-      const applied=applyWidth(currentWidth);
-      if(applied!=null)currentWidth=applied;
-    }else{
-      document.documentElement.style.removeProperty('--side-width');
-    }
-    refreshMap();
-  });
-}
-
 /* ── main ────────────────────────────────────────────────── */
 async function init(){
   applyLang();
   initMap();
-  setupSidebarResize();
   loadCustomNafotFromStorage();
 
   document.getElementById('btnFloatToggle').addEventListener('click',e=>{

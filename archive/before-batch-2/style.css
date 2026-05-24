@@ -1,27 +1,20 @@
 /* === Reset & Base === */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:#f1f5f9;color:#0f172a;font-size:14px}
-:root{--primary:#1e40af;--primary-light:#3b82f6;--accent:#059669;--accent-light:#34d399;--danger:#dc2626;--warn:#f59e0b;--surface:#fff;--surface2:#f8fafc;--border:#e2e8f0;--text:#0f172a;--text2:#475569;--radius:12px;--shadow:0 2px 8px rgba(0,0,0,.08);--side-width:300px;--resize-handle-width:8px}
+:root{--primary:#1e40af;--primary-light:#3b82f6;--accent:#059669;--accent-light:#34d399;--danger:#dc2626;--warn:#f59e0b;--surface:#fff;--surface2:#f8fafc;--border:#e2e8f0;--text:#0f172a;--text2:#475569;--radius:12px;--shadow:0 2px 8px rgba(0,0,0,.08)}
 
 /* === Layout === */
 #app{display:grid;grid-template-rows:56px 1fr;height:100vh;overflow:hidden}
 header{background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-weight:700;font-size:15px;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.2)}
 header .status{font-size:12px;font-weight:400;opacity:.85}
-main{display:grid;grid-template-columns:minmax(0,1fr) var(--resize-handle-width) minmax(260px,var(--side-width));height:calc(100vh - 56px);overflow:hidden}
+main{display:grid;grid-template-columns:1fr 460px;height:calc(100vh - 56px);overflow:hidden}
 
 /* === Map === */
 #mapWrap{position:relative;background:#e2e8f0;overflow:hidden}
 #map{height:100%;width:100%}
 
-/* === Sidebar Resize Handle === */
-#sideResizeHandle{position:relative;width:var(--resize-handle-width);cursor:col-resize;background:linear-gradient(180deg,#f8fafc,#eef2f7);border-left:1px solid var(--border);border-right:1px solid var(--border);touch-action:none;user-select:none}
-#sideResizeHandle::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:2px;height:48px;border-radius:2px;background:#94a3b8;box-shadow:6px 0 0 #cbd5e1,-6px 0 0 #cbd5e1}
-#sideResizeHandle:hover{background:linear-gradient(180deg,#eff6ff,#dbeafe)}
-#sideResizeHandle.dragging{background:linear-gradient(180deg,#dbeafe,#bfdbfe)}
-body.is-resizing{cursor:col-resize;user-select:none}
-
 /* === Float Panel on Map === */
-.float{position:absolute;top:12px;left:12px;z-index:1000;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.13);padding:12px;width:250px;max-height:calc(100vh - 120px);overflow-y:auto}
+.float{position:absolute;top:12px;left:12px;z-index:1000;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.13);padding:14px;width:280px;max-height:calc(100vh - 120px);overflow-y:auto}
 .float-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .float h4{margin:0;font-size:15px;color:var(--primary)}
 .float-toggle{background:none;border:none;cursor:pointer;color:var(--primary);font-size:13px;padding:2px 6px;border-radius:6px;line-height:1;transition:transform .2s,background .15s}
@@ -87,27 +80,6 @@ body.is-resizing{cursor:col-resize;user-select:none}
 .chartWide{height:300px;margin-top:10px}
 .chart-title-row{display:flex;align-items:center;gap:8px;margin-top:12px;margin-bottom:2px}
 .chart-title-text{font-size:13px;font-weight:700;color:var(--primary)}
-.chart-host{position:relative;padding-top:30px;box-sizing:border-box}
-.chart-info-btn{position:absolute;top:4px;right:8px;left:auto;z-index:5;width:22px;height:22px;border:1px solid var(--border);border-radius:50%;background:#fff;color:var(--primary);font-weight:700;font-size:12px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)}
-.chart-info-btn:hover{background:#dbeafe;border-color:var(--primary-light)}
-
-.chart-help-overlay{position:fixed;inset:0;background:rgba(15,23,42,.6);display:none;align-items:center;justify-content:center;z-index:3500}
-.chart-help-overlay.open{display:flex}
-.chart-help-modal{background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:min(620px,92vw);max-height:85vh;overflow:auto;padding:16px 16px 14px;position:relative}
-.chart-help-title{font-size:16px;font-weight:700;color:var(--primary);margin:0 0 8px 38px}
-.chart-help-body{font-size:13px;color:var(--text);line-height:1.5;white-space:pre-line}
-.chart-help-close{position:absolute;top:10px;left:10px;width:28px;height:28px;border:1px solid var(--border);background:#f1f5f9;border-radius:8px;cursor:pointer}
-.chart-help-close:hover{background:#dbeafe}
-
-button:focus-visible,
-select:focus-visible,
-input:focus-visible,
-a:focus-visible,
-.tabbtn:focus-visible,
-.chart-info-btn:focus-visible{
-  outline:3px solid #1d4ed8;
-  outline-offset:2px;
-}
 
 /* === Comparison === */
 .cmp-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
@@ -147,13 +119,6 @@ a:focus-visible,
 .layer-toggle-group .layer-name{font-size:12px;color:var(--primary);margin-bottom:3px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
 .layer-toggle-group .type-toggle{margin-right:14px}
 .layer-toggle-group .type-toggle label{margin:2px 0;font-size:12px;display:flex;align-items:center;gap:4px}
-.layer-group-main,.optional-source-layers{margin-top:8px}
-.layer-group-summary{cursor:pointer;display:flex;align-items:center;gap:6px;list-style:none}
-.layer-group-summary::-webkit-details-marker{display:none}
-.layer-group-arrow{display:inline-block;color:#64748b;font-size:12px;line-height:1;transition:transform .15s}
-details[open]>.layer-group-summary .layer-group-arrow{transform:rotate(90deg)}
-.optional-source-layers{margin-top:8px;border-top:1px dashed var(--border);padding-top:8px}
-.optional-source-layers .layer-group-summary{font-size:12px;font-weight:700;color:var(--text2)}
 
 /* === Object list rows === */
 #objListContent .poly-item{align-items:flex-start}
@@ -231,7 +196,6 @@ details[open]>.layer-group-summary .layer-group-arrow{transform:rotate(90deg)}
 /* === Responsive === */
 @media(max-width:900px){
   main{grid-template-columns:1fr;grid-template-rows:50vh 1fr}
-  #sideResizeHandle{display:none}
-  .float{width:210px;padding:10px}
+  .float{width:220px;padding:10px}
   .kpis{grid-template-columns:repeat(2,1fr)}
 }

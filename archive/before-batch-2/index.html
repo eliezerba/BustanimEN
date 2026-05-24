@@ -25,17 +25,17 @@
   <div class="float" id="floatPanel">
     <div class="float-header">
       <h4 id="floatTitle">Layers &amp; Map</h4>
-      <button id="btnFloatToggle" class="float-toggle collapsed" title="Collapse / Expand" aria-expanded="false">▲</button>
+      <button id="btnFloatToggle" class="float-toggle" title="Collapse / Expand" aria-expanded="true">▲</button>
     </div>
-    <div id="floatBody" class="collapsed">
+    <div id="floatBody">
     <select id="basemapSel">
       <optgroup label="Base Maps" id="bmGroupBase" data-label-he="מפות בסיס" data-label-en="Base Maps">
         <option value="osm">OSM Modern</option>
-        <option value="sat" selected>Satellite (Esri)</option>
+        <option value="sat">Satellite (Esri)</option>
       </optgroup>
       <optgroup label="Palestine Open Maps">
         <option value="pal20k">POM 1:20k (1940s)</option>
-        <option value="pal-1940s">POM Combined (1940s)</option>
+        <option value="pal-1940s" selected>POM Combined (1940s)</option>
         <option value="pal100k">POM 1:100k (1950s)</option>
         <option value="pal250k">POM 1:250k (1946)</option>
         <option value="pal63k">POM 1:63k PEF (1880)</option>
@@ -67,8 +67,6 @@
   </div><!-- /floatPanel -->
 </div><!-- /mapWrap -->
 
-<div id="sideResizeHandle" role="separator" aria-orientation="vertical" aria-label="Resize sidebar"></div>
-
 <div id="side">
   <div class="tabs" id="tabsBar">
     <button class="tabbtn active" data-tab="overview" id="tabOverview">Overview</button>
@@ -84,11 +82,11 @@
   <div class="panel tab active" id="overview">
     <div class="kpis">
       <div class="kpi"><div class="label" id="kLbl1">Orchard Fruit Trees</div><div class="v" id="kFruitTrees"></div></div>
-      <div class="kpi"><div class="label" id="kLbl2">Non-Orchard Trees</div><div class="v" id="kCarobTrees"></div></div>
+      <div class="kpi"><div class="label" id="kLbl2">Non-Fruit Trees</div><div class="v" id="kCarobTrees"></div></div>
       <div class="kpi"><div class="label" id="kLbl3">Districts</div><div class="v" id="kNafot"></div></div>
-      <div class="kpi"><div class="label" id="kLbl4">Agricultural Installations</div><div class="v" id="kVegetation"></div></div>
-      <div class="kpi"><div class="label" id="kLbl5">Non-Orchard / Wild Tree Records</div><div class="v" id="kAgTools"></div></div>
-      <div class="kpi"><div class="label" id="kLbl6">Terraces (source layer)</div><div class="v" id="kTerraces"></div></div>
+      <div class="kpi"><div class="label" id="kLbl4">Non-Orchard Trees</div><div class="v" id="kVegetation"></div></div>
+      <div class="kpi"><div class="label" id="kLbl5">Agricultural Installations</div><div class="v" id="kAgTools"></div></div>
+      <div class="kpi"><div class="label" id="kLbl6">Terraces</div><div class="v" id="kTerraces"></div></div>
       <div class="kpi"><div class="label" id="kLbl7">Avg. Height (Orchard Fruit Trees)</div><div class="v" id="kAvgH"></div></div>
       <div class="kpi"><div class="label" id="kLbl8">Avg. Girth (Orchard Fruit Trees)</div><div class="v" id="kAvgG"></div></div>
       <div class="kpi"><div class="label" id="kLbl9">Orchard Fruit Tree Types</div><div class="v" id="kFruitTypes"></div></div>
@@ -121,7 +119,7 @@
       <div class="grp-btn-bar">
         <button class="grp-btn active" data-grp="" id="distGrpAll">All</button>
         <button class="grp-btn" data-grp="fruit" id="distGrpFruit">Orchard Fruit Trees</button>
-        <button class="grp-btn" data-grp="carob" id="distGrpCarob">Optional Source Layer</button>
+        <button class="grp-btn" data-grp="carob" id="distGrpCarob">Non-Fruit Trees</button>
         <button class="grp-btn" data-grp="vegetation" id="distGrpVegetation">Non-Orchard Trees</button>
       </div>
       <div class="small mb8" id="districtDrillHint">Click an orchard fruit tree name for detailed analysis</div>
@@ -147,7 +145,7 @@
       <select id="speciesFilterLayer" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px">
         <option value="" id="speciesGroupAll">All Groups</option>
         <option value="fruit" id="speciesGroupFruit">Orchard Fruit Trees</option>
-        <option value="carob" id="speciesGroupCarob">Non-Orchard / Wild Tree Records</option>
+        <option value="carob" id="speciesGroupCarob">Non-Fruit Trees</option>
         <option value="vegetation" id="speciesGroupVegetation">Non-Orchard Trees</option>
       </select>
       <input type="text" id="speciesSearch" placeholder="Search orchard fruit tree..." style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px" />
@@ -164,7 +162,6 @@
       <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:8px">
         <div style="flex:1"><div class="small" style="margin-bottom:3px" id="speciesCmpLblA">Orchard Fruit Tree A</div><select id="speciesCmpA" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:8px;font-size:12px"></select></div>
         <div style="flex:1"><div class="small" style="margin-bottom:3px" id="speciesCmpLblB">Orchard Fruit Tree B</div><select id="speciesCmpB" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:8px;font-size:12px"></select></div>
-        <div style="flex:1"><div class="small" style="margin-bottom:3px" id="speciesCmpDistrictLbl">District</div><select id="speciesCmpDistrict" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:8px;font-size:12px"><option value="">All districts</option></select></div>
         <button id="btnRunSpeciesCmp" style="padding:7px 16px;background:var(--primary);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:12px">Compare</button>
       </div>
       <div id="speciesCmpResult"></div>
@@ -192,7 +189,7 @@
         <select id="analyticsFilterGroup">
           <option value="" id="analyticsGroupAll">All Groups</option>
           <option value="fruit" id="analyticsGroupFruit">Orchard Fruit Trees</option>
-          <option value="carob" id="analyticsGroupCarob">Non-Orchard / Wild Tree Records</option>
+          <option value="carob" id="analyticsGroupCarob">Non-Fruit Trees</option>
           <option value="vegetation" id="analyticsGroupVegetation">Non-Orchard Trees</option>
         </select>
       </div>
