@@ -488,8 +488,9 @@ function typeValueLabel(val, lk) {
 /* Translate / transliterate a Nafa (district) name */
 function nafaLabel(naf) {
   if (!naf) return NOT_AVAILABLE_LABEL;
-  if (LANG === 'he') return naf;
-  return nafaEnByHe[naf] || NAFA_EN[naf] || naf;
+  const raw=String(naf).trim();
+  if(!raw)return NOT_AVAILABLE_LABEL;
+  return nafaEnByHe[raw] || NAFA_EN[raw] || raw;
 }
 /* Shorthand unit */
 function cmUnit() { return LANG === 'he' ? ' ס"מ' : ' cm'; }
@@ -726,7 +727,7 @@ async function fetchNafot(){
     officialNafotFeats=features.map(f=>{
       const props=f.properties||{};
       const nafa=getRegionDisplayName(props);
-      const areaEn=String(props?.REG_NAME ?? '').trim() || getNafaEnglishFromProps(props);
+      const areaEn=String(props?.Lebel ?? '').trim() || getNafaEnglishFromProps(props) || String(props?.REG_NAME ?? '').trim();
       if(nafa&&areaEn)nafaEnByHe[nafa]=areaEn;
       return {
         ...f,
@@ -1074,7 +1075,6 @@ function renderNafotOnMap(visible){
       const isCustom=!!feat.properties?._custom;
       const name=feat.properties.Nafa||'';
       const regionName=String(feat.properties?._region_name||'').trim();
-      const regionLabel=String(feat.properties?._region_label||'').trim();
       layer.bindTooltip(nafaLabel(name)+(isCustom?' ✏':''),{
         permanent:true,direction:'center',
         className:'nafa-zone-label'+(isCustom?' nafa-zone-label-custom':''),
@@ -1082,8 +1082,7 @@ function renderNafotOnMap(visible){
       if(!isCustom){
         const popupLines=[];
         popupLines.push(`<div style="font-weight:700">${nafaLabel(name)}</div>`);
-        if(regionLabel&&regionLabel!==name)popupLines.push(`<div>${regionLabel}</div>`);
-        if(regionName&&regionName!==regionLabel&&regionName!==name)popupLines.push(`<div>${regionName}</div>`);
+        if(regionName&&regionName!==name)popupLines.push(`<div>${regionName}</div>`);
         layer.bindPopup(`<div style="min-width:140px">${popupLines.join('')}</div>`);
       }
       if(isCustom){
