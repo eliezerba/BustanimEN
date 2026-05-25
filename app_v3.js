@@ -2780,6 +2780,31 @@ function applyLang(){
 
 function setStatus(msg){document.getElementById('statusText').textContent=msg;}
 
+function initCreditsDialog(){
+  const trigger=document.getElementById('btnCredits');
+  const overlay=document.getElementById('creditsDialog');
+  const closeBtn=document.getElementById('creditsClose');
+  if(!trigger||!overlay||!closeBtn)return;
+
+  const isOpen=()=>overlay.classList.contains('open');
+  const open=()=>{
+    overlay._lastFocus=document.activeElement;
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden','false');
+    closeBtn.focus();
+  };
+  const close=()=>{
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden','true');
+    if(overlay._lastFocus&&typeof overlay._lastFocus.focus==='function')overlay._lastFocus.focus();
+  };
+
+  trigger.addEventListener('click',open);
+  closeBtn.addEventListener('click',close);
+  overlay.addEventListener('click',e=>{if(e.target===overlay)close();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&isOpen())close();});
+}
+
 function setupSidebarResize(){
   const mainEl=document.querySelector('main');
   const handleEl=document.getElementById('sideResizeHandle');
@@ -2926,6 +2951,7 @@ async function init(){
 
   setupTabs();
   initChartHelpUI();
+  initCreditsDialog();
   setupSearch();
   /* Bustan search live filter */
   const bustanSearchEl=document.getElementById('bustanSearch');

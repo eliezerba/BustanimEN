@@ -4,10 +4,39 @@ html,body{height:100%;font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:
 :root{--primary:#1e40af;--primary-light:#3b82f6;--accent:#059669;--accent-light:#34d399;--danger:#dc2626;--warn:#f59e0b;--surface:#fff;--surface2:#f8fafc;--border:#e2e8f0;--text:#0f172a;--text2:#475569;--radius:12px;--shadow:0 2px 8px rgba(0,0,0,.08);--side-width:300px;--resize-handle-width:8px}
 
 /* === Layout === */
-#app{display:grid;grid-template-rows:56px 1fr;height:100vh;overflow:hidden}
+#app{display:grid;grid-template-rows:56px minmax(0,1fr) auto;height:100vh;overflow:hidden}
 header{background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-weight:700;font-size:15px;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+header .header-title-group{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
+header .header-project-logo{height:32px;max-width:180px;width:auto;object-fit:contain;flex:0 0 auto}
+header .header-actions{display:flex;gap:12px;align-items:center;padding-inline-start:12px}
+html[dir="rtl"] header .header-title-group{flex-direction:row-reverse}
+#hdrTitle{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 header .status{font-size:12px;font-weight:400;opacity:.85}
-main{display:grid;grid-template-columns:minmax(0,1fr) var(--resize-handle-width) minmax(260px,var(--side-width));height:calc(100vh - 56px);overflow:hidden}
+main{display:grid;grid-template-columns:minmax(0,1fr) var(--resize-handle-width) minmax(260px,var(--side-width));min-height:0;overflow:hidden}
+
+.branding-footer{padding:8px 16px;border-top:1px solid var(--border);background:var(--surface2)}
+.branding-footer-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.branding-logos{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.branding-logo{height:28px;max-width:100%;width:auto;object-fit:contain;display:block}
+.branding-logo-haifa{max-width:160px}
+.branding-logo-erc{max-width:220px}
+.branding-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-inline-start:auto}
+.branding-text{font-size:12px;color:var(--text2)}
+.branding-credits-btn{padding:4px 10px;border:1px solid var(--border);border-radius:999px;background:#fff;color:var(--text2);font-size:12px;cursor:pointer}
+.branding-credits-btn:hover{border-color:var(--primary);color:var(--primary)}
+
+.credits-overlay{position:fixed;inset:0;background:rgba(15,23,42,.52);display:none;align-items:center;justify-content:center;z-index:3600;padding:16px}
+.credits-overlay.open{display:flex}
+.credits-modal{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:min(720px,96vw);max-height:88vh;overflow:auto;padding:16px}
+.credits-close{position:absolute;top:10px;left:10px;width:32px;height:32px;border:1px solid var(--border);background:#f1f5f9;border-radius:8px;cursor:pointer;font-size:20px;line-height:1}
+.credits-close:hover{background:#dbeafe}
+.credits-title{margin:0 0 12px 40px;color:var(--primary);font-size:18px}
+.credits-logo-grid{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.credits-logo{width:auto;max-width:100%;object-fit:contain}
+.credits-logo-bostan{max-height:96px}
+.credits-logo-grid .credits-logo-haifa{max-height:64px}
+.credits-logo-grid .credits-logo-erc{max-height:64px}
+.credits-lines{margin-top:12px;font-size:13px;color:var(--text2);line-height:1.5}
 
 /* === Map === */
 #mapWrap{position:relative;background:#e2e8f0;overflow:hidden}
@@ -234,4 +263,11 @@ details[open]>.layer-group-summary .layer-group-arrow{transform:rotate(90deg)}
   #sideResizeHandle{display:none}
   .float{width:210px;padding:10px}
   .kpis{grid-template-columns:repeat(2,1fr)}
+  header .header-project-logo{height:28px}
+  .branding-logo{height:24px}
+  .branding-logo-haifa{max-width:140px}
+  .branding-logo-erc{max-width:180px}
+  .branding-footer{padding:8px 12px}
+  .branding-meta{margin-inline-start:0}
+  .branding-text{font-size:11px}
 }

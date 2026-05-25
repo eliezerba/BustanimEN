@@ -9,13 +9,16 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
-<link rel="stylesheet" href="style.css?v=20260524r1" />
+<link rel="stylesheet" href="style.css?v=20260524r2" />
 </head>
 <body>
 <div id="app">
 <header>
-  <span id="hdrTitle">Research Dashboard &mdash; Ancient Orchards in the Land of Israel <small style="font-size:0.7em;opacity:0.75">(v3)</small></span>
-  <div style="display:flex;gap:12px;align-items:center">
+  <div class="header-title-group">
+    <img class="header-project-logo" src="src/assets/logos/bostan-tree.png" alt="BOSTAN-TREE" />
+    <span id="hdrTitle">Research Dashboard &mdash; Ancient Orchards in the Land of Israel <small style="font-size:0.7em;opacity:0.75">(v3)</small></span>
+  </div>
+  <div class="header-actions">
     <span class="status" id="statusText">Loading data...</span>
   </div>
 </header>
@@ -282,6 +285,19 @@
   </div>
 </div>
 </main>
+
+<footer class="branding-footer" aria-label="Institutional branding">
+  <div class="branding-footer-inner">
+    <div class="branding-logos">
+      <img class="branding-logo branding-logo-haifa" src="src/assets/logos/haifa-logo.png" alt="University of Haifa" />
+      <img class="branding-logo branding-logo-erc" src="src/assets/logos/erc-eu.jpg" alt="European Research Council / European Union" />
+    </div>
+    <div class="branding-meta">
+      <span class="branding-text">University of Haifa &middot; European Research Council</span>
+      <button id="btnCredits" type="button" class="branding-credits-btn" aria-haspopup="dialog" aria-controls="creditsDialog">About</button>
+    </div>
+  </div>
+</footer>
 </div>
 
 <!-- Object Detail Modal -->
@@ -298,6 +314,23 @@
   <img id="photoPopupImg" src="" alt="" style="max-width:90vw;max-height:90vh;border-radius:12px;box-shadow:0 25px 70px rgba(0,0,0,.4);z-index:3001">
 </div>
 
-<script src="app_v3.js?v=20260524r1"></script>
+<div id="creditsDialog" class="credits-overlay" aria-hidden="true">
+  <div class="credits-modal" role="dialog" aria-modal="true" aria-labelledby="creditsTitle">
+    <button id="creditsClose" type="button" class="credits-close" aria-label="Close credits">&times;</button>
+    <h2 id="creditsTitle" class="credits-title">About &amp; Credits</h2>
+    <div class="credits-logo-grid">
+      <img class="credits-logo credits-logo-bostan" src="src/assets/logos/bostan-tree.png" alt="BOSTAN-TREE" />
+      <img class="credits-logo credits-logo-haifa" src="src/assets/logos/haifa-logo.png" alt="University of Haifa" />
+      <img class="credits-logo credits-logo-erc" src="src/assets/logos/erc-eu.jpg" alt="European Research Council / European Union" />
+    </div>
+    <div class="credits-lines">
+      <p>BOSTAN-TREE dashboard</p>
+      <p>University of Haifa</p>
+      <p>Supported by the European Research Council / European Union</p>
+    </div>
+  </div>
+</div>
+
+<script src="app_v3.js?v=20260524r2"></script>
 </body>
 </html>
