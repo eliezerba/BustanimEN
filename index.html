@@ -76,7 +76,7 @@
   <div class="tabs" id="tabsBar">
     <button class="tabbtn active" data-tab="overview" id="tabOverview">Overview</button>
     <button class="tabbtn" data-tab="bustans" id="tabBustans">Historical Orchard</button>
-    <button class="tabbtn" data-tab="districts" id="tabDistricts">Districts</button>
+    <button class="tabbtn" data-tab="districts" id="tabDistricts">Geographic Regions</button>
     <button class="tabbtn" data-tab="species" id="tabSpecies">Orchard Fruit Trees</button>
     <button class="tabbtn" data-tab="analytics" id="tabAnalytics">Analytics</button>
     <button class="tabbtn" data-tab="advanced" id="tabAdvanced">Advanced</button>
@@ -88,7 +88,7 @@
     <div class="kpis">
       <div class="kpi"><div class="label" id="kLbl1">Orchard Fruit Trees</div><div class="v" id="kFruitTrees"></div></div>
       <div class="kpi"><div class="label" id="kLbl2">Non-Orchard Trees</div><div class="v" id="kCarobTrees"></div></div>
-      <div class="kpi"><div class="label" id="kLbl3">Districts</div><div class="v" id="kNafot"></div></div>
+      <div class="kpi"><div class="label" id="kLbl3">Geographic Regions</div><div class="v" id="kNafot"></div></div>
       <div class="kpi"><div class="label" id="kLbl4">Agricultural Installations</div><div class="v" id="kVegetation"></div></div>
       <div class="kpi"><div class="label" id="kLbl5">Non-Orchard / Wild Tree Records</div><div class="v" id="kAgTools"></div></div>
       <div class="kpi"><div class="label" id="kLbl6">Terraces (source layer)</div><div class="v" id="kTerraces"></div></div>
@@ -101,9 +101,9 @@
     <div id="chartOverviewPie" class="chart"></div>
   </div>
 
-  <!-- === TAB: Districts (Nafot) === -->
+  <!-- === TAB: Geographic Regions === -->
   <div class="panel tab" id="districts">
-    <div class="small mb8" id="districtsIntro">Object counts by modern Israeli administrative districts. Click a row to focus the map. This view is an administrative spatial summary, not a historical or ecological regional classification.</div>
+    <div class="small mb8" id="districtsIntro">Object counts by geographic regions from geo_regions_porat. Click a row to focus the map.</div>
     <div id="districtList" style="overflow-y:auto;max-height:280px"></div>
     <div class="small mt8" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
       <span id="districtsAddHint">Add polygon:</span>
@@ -167,7 +167,7 @@
       <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:8px">
         <div style="flex:1"><div class="small" style="margin-bottom:3px" id="speciesCmpLblA">Orchard Fruit Tree A</div><select id="speciesCmpA" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:8px;font-size:12px"></select></div>
         <div style="flex:1"><div class="small" style="margin-bottom:3px" id="speciesCmpLblB">Orchard Fruit Tree B</div><select id="speciesCmpB" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:8px;font-size:12px"></select></div>
-        <div style="flex:1"><div class="small" style="margin-bottom:3px" id="speciesCmpDistrictLbl">District</div><select id="speciesCmpDistrict" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:8px;font-size:12px"><option value="">All districts</option></select></div>
+        <div style="flex:1"><div class="small" style="margin-bottom:3px" id="speciesCmpDistrictLbl">Region</div><select id="speciesCmpDistrict" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:8px;font-size:12px"><option value="">All regions</option></select></div>
         <button id="btnRunSpeciesCmp" style="padding:7px 16px;background:var(--primary);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:12px">Compare</button>
       </div>
       <div id="speciesCmpResult"></div>
@@ -203,7 +203,7 @@
         <input type="text" id="analyticsFilterSpecies" list="analyticsSpeciesList" placeholder="Type orchard fruit tree..." style="width:100%;box-sizing:border-box" />
         <datalist id="analyticsSpeciesList"></datalist>
       </div>
-      <div style="flex:2"><label id="analyticsLblDistricts">Districts (Ctrl for multi-select)</label>
+      <div style="flex:2"><label id="analyticsLblDistricts">Regions (Ctrl for multi-select)</label>
         <select id="analyticsFilterNafa" multiple size="4" style="width:100%"></select>
       </div>
       <button id="btnAnalyticsApply" class="btn-apply">Apply</button>
@@ -235,14 +235,14 @@
 
   <!-- === TAB: Compare === -->
   <div class="panel tab" id="compare">
-    <div class="small mb8" id="compareIntro">Choose two units to compare: tree type, layer, district</div>
+    <div class="small mb8" id="compareIntro">Choose two units to compare: tree type, layer, region</div>
     <div class="cmp-row">
       <div class="cmp-side">
         <label class="small" id="labelSideA">Side A &ndash; Type</label>
         <select id="cmpTypeA">
           <option value="treetype" id="cmpTypeATree">Tree Type</option>
           <option value="layer" id="cmpTypeALayer">Layer</option>
-          <option value="district" id="cmpTypeADistrict">District</option>
+          <option value="district" id="cmpTypeADistrict">Region</option>
         </select>
         <select id="cmpSelA"></select>
         <label class="small" id="cmpSpacesLabelA">Spaces (optional)</label>
@@ -253,7 +253,7 @@
         <select id="cmpTypeB">
           <option value="treetype" id="cmpTypeBTree">Tree Type</option>
           <option value="layer" id="cmpTypeBLayer">Layer</option>
-          <option value="district" id="cmpTypeBDistrict">District</option>
+          <option value="district" id="cmpTypeBDistrict">Region</option>
         </select>
         <select id="cmpSelB"></select>
         <label class="small" id="cmpSpacesLabelB">Spaces (optional)</label>
@@ -331,6 +331,6 @@
   </div>
 </div>
 
-<script src="app_v3.js?v=20260524r2"></script>
+<script src="app_v3.js?v=20260525r1"></script>
 </body>
 </html>
