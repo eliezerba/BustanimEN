@@ -22,9 +22,9 @@ const TR = {
     vegetation:'צמחיה',
     ag_tools:'כלים חקלאיים',
     terraces:'טרסות',
-    nafot:'נפות',
-    nafot_districts:'נפות (מחוזות)',
-    district_analysis:'ניתוח לפי נפה',
+    nafot:'מרחבים',
+    nafot_districts:'מרחבים גאוגרפיים',
+    district_analysis:'ניתוח לפי מרחב',
     show_all:'הצג הכל',
     zoom_fit:'זום לנתונים',
     clear_sel:'נקה בחירה',
@@ -32,7 +32,7 @@ const TR = {
     search:'חפש שם / סוג...',
     overview:'סקירה',
     bustans:'בוסתנים',
-    districts:'נפות',
+    districts:'מרחבים גאוגרפיים',
     objects:'אובייקטים',
     analytics:'הדמיות',
     advanced:'מתקדם',
@@ -53,7 +53,7 @@ const TR = {
     title:'דשבורד מחקרי — בוסתנים קדומים בארץ ישראל',
     coords:'WGS84 Coordinates',
     tab_species:'מינים',
-    districts_intro:'ניתוח אובייקטים לפי נפות ישראל — לחצו על שורה למיקוד. הנפות מוצגות גם על המפה בצבע תכלת.',
+    districts_intro:'ספירת אובייקטים לפי מרחבים גאוגרפיים מתוך geo_regions_porat. לחצו על שורה למיקוד במפה.',
     grp_all:'הכל',
     click_species_detail:'לחצו על שם מין לניתוח מפורט',
     all_groups:'כל הקבוצות',
@@ -64,17 +64,18 @@ const TR = {
     species_b:'מין ב׳',
     filter_group:'תחום',
     filter_species_ac:'מין ספציפי (השלמה אוטומטית)',
-    filter_districts:'נפות (Ctrl להרבה)',
+    filter_districts:'מרחבים (Ctrl להרבה)',
     all_domains:'כל התחומים',
     apply:'הצג',
     reset:'אפס',
     advanced_intro:'ניתוח מתקדם: CDF, Lorenz, מתאמים, חלוקה מרחבית',
-    compare_intro:'בחרו שתי יחידות להשוואה: סוג עץ, שכבה, נפה',
+    compare_intro:'בחרו שתי יחידות להשוואה: סוג עץ, שכבה, מרחב',
     side_type_a:'צד א׳ – סוג',
     side_type_b:'צד ב׳ – סוג',
     tree_type_opt:'סוג עץ',
     layer_opt:'שכבה',
-    district_opt:'נפה',
+    district_opt:'מרחב',
+    all_regions:'כל המרחבים',
     spaces_optional:'מרחבים (אופציונלי)',
     no_data_compare:'אין נתונים להשוואה',
     objects:'אובייקטים',
@@ -102,12 +103,12 @@ const TR = {
     fruit_type_count:'סוגי עצי פרי',
     draw_polygon_name:'הקלד שם לפוליגון החדש:',
     draw_polygon_invalid:'שם לא תקין. הפוליגון לא נשמר.',
-    draw_polygon_exists:'כבר קיימת נפה בשם זה. בחר שם אחר.',
-    draw_polygon_saved:'הפוליגון נשמר כנפה חדשה.',
+    draw_polygon_exists:'כבר קיים מרחב בשם זה. בחרו שם אחר.',
+    draw_polygon_saved:'הפוליגון נשמר כמרחב חדש.',
     draw_polygon_deleted:'הפוליגון המצויר נמחק.',
     draw_polygon_load_failed:'טעינת פוליגונים שמורים נכשלה.',
     draw_polygon_saved_storage:'פוליגונים מותאמים נשמרו מקומית.',
-    draw_polygon_label_custom:'נפה מותאמת',
+    draw_polygon_label_custom:'מרחב מותאם',
     districts_add_hint:'הוספת פוליגון:',
     districts_add_link:'לחצו כאן לציור אזור חדש',
     districts_export_json:'שמור JSON',
@@ -136,9 +137,9 @@ const TR = {
     vegetation:'Non-Orchard Trees',
     ag_tools:'Agricultural Installations',
     terraces:'Terraces',
-    nafot:'Districts',
-    nafot_districts:'Districts (Nafot)',
-    district_analysis:'Analysis by District',
+    nafot:'Geographic Regions',
+    nafot_districts:'Geographic Regions',
+    district_analysis:'Analysis by Region',
     show_all:'Show All',
     zoom_fit:'Zoom to Fit',
     clear_sel:'Clear Selection',
@@ -146,7 +147,7 @@ const TR = {
     search:'Search name / type...',
     overview:'Overview',
     bustans:'Historical Orchard',
-    districts:'Districts',
+    districts:'Geographic Regions',
     objects:'Objects',
     analytics:'Analytics',
     advanced:'Advanced',
@@ -167,7 +168,7 @@ const TR = {
     title:'Research Dashboard — Ancient Orchards in the Land of Israel',
     coords:'WGS84 Coordinates',
     tab_species:'Orchard Fruit Trees',
-    districts_intro:'Object counts by modern Israeli administrative districts. Click a row to focus the map. This view is an administrative spatial summary, not a historical or ecological regional classification.',
+    districts_intro:'Object counts by geographic regions from geo_regions_porat. Click a row to focus the map.',
     grp_all:'All',
     click_species_detail:'Click an orchard fruit tree name for detailed analysis',
     all_groups:'All groups',
@@ -178,17 +179,18 @@ const TR = {
     species_b:'Orchard Fruit Tree B',
     filter_group:'Group',
     filter_species_ac:'Specific Orchard Fruit Tree (Autocomplete)',
-    filter_districts:'Districts (Ctrl for multi-select)',
+    filter_districts:'Regions (Ctrl for multi-select)',
     all_domains:'All groups',
     apply:'Apply',
     reset:'Reset',
     advanced_intro:'Advanced analysis: CDF, Lorenz, correlations, spatial distribution',
-    compare_intro:'Choose two units to compare: tree type, layer, district',
+    compare_intro:'Choose two units to compare: tree type, layer, region',
     side_type_a:'Side A – Type',
     side_type_b:'Side B – Type',
     tree_type_opt:'Tree Type',
     layer_opt:'Layer',
-    district_opt:'District',
+    district_opt:'Region',
+    all_regions:'All regions',
     spaces_optional:'Spaces (optional)',
     no_data_compare:'No data to compare',
     objects:'Objects',
@@ -216,12 +218,12 @@ const TR = {
     fruit_type_count:'Orchard Fruit Tree Types',
     draw_polygon_name:'Enter a name for the new polygon:',
     draw_polygon_invalid:'Invalid name. Polygon was not saved.',
-    draw_polygon_exists:'A district with this name already exists. Choose another name.',
-    draw_polygon_saved:'Polygon saved as a new district.',
+    draw_polygon_exists:'A region with this name already exists. Choose another name.',
+    draw_polygon_saved:'Polygon saved as a new region.',
     draw_polygon_deleted:'Drawn polygon deleted.',
     draw_polygon_load_failed:'Failed to load saved polygons.',
     draw_polygon_saved_storage:'Custom polygons were saved locally.',
-    draw_polygon_label_custom:'Custom district',
+    draw_polygon_label_custom:'Custom region',
     districts_add_hint:'Add polygon:',
     districts_add_link:'Click here to draw a new area',
     districts_export_json:'Save JSON',
@@ -248,6 +250,7 @@ const NOT_AVAILABLE_LABEL = 'Not available';
 /* ── API Config ─────────────────────────────────────────── */
 const API_BASE = 'https://services5.arcgis.com/eJYUV73IZAY87Jwy/arcgis/rest/services/%D7%91%D7%95%D7%A1%D7%AA%D7%A0%D7%99%D7%9D_2_%D7%AA%D7%A6%D7%95%D7%92%D7%94/FeatureServer';
 const BUSTANIM_LAYER_API = 'https://services5.arcgis.com/eJYUV73IZAY87Jwy/arcgis/rest/services/%D7%AA%D7%99%D7%97%D7%95%D7%9D_%D7%91%D7%95%D7%A1%D7%AA%D7%A0%D7%99%D7%9D_%D7%9C%D7%93%D7%95%D7%97_%D7%A1%D7%95%D7%A4%D7%99/FeatureServer/0';
+const GEO_REGIONS_PORAT_LAYER = 'https://services5.arcgis.com/eJYUV73IZAY87Jwy/arcgis/rest/services/geo_regions_porat/FeatureServer/0';
 
 const LAYER_META = {
   boundaries: { id:0, name_he:'בוסתנים (תיחום)', name_en:'Orchards',          color:'#2563eb', geom:'polygon', typeField:'Name',   hidden:true },
@@ -423,6 +426,15 @@ function getNafaEnglishFromProps(props){
     }
   }
   return '';
+}
+
+function getRegionDisplayName(props){
+  const lebel=String(props?.Lebel ?? '').trim();
+  const regName=String(props?.REG_NAME ?? '').trim();
+  if(lebel)return lebel;
+  if(regName)return regName;
+  const objectId=String(props?.OBJECTID ?? '').trim();
+  return objectId ? `Region ${objectId}` : 'Region';
 }
 
 /* ── Bustanim (report layer) description codes ──────────── */
@@ -692,25 +704,46 @@ async function fetchLayer(id){
   return all;
 }
 
-/* ── Fetch iplan districts (nafot) ──────────────────────── */
+/* ── Fetch geographic regions (nafot compatibility) ─────── */
 async function fetchNafot(){
-  const url='https://ags.iplan.gov.il/arcgisiplan/rest/services/PlanningPublic/gvulot_retzef/MapServer/4/query?where=1%3D1&outFields=*&returnGeometry=true&f=geojson';
+  const baseUrl=`${GEO_REGIONS_PORAT_LAYER}/query?where=1%3D1&outFields=*&returnGeometry=true&outSR=4326&f=geojson`;
+  const pageSize=2000;
   try{
-    const r=await fetch(url);
-    if(!r.ok)throw new Error(`HTTP ${r.status}`);
-    const gj=await r.json();
-    officialNafotFeats=(gj.features||[]).filter(f=>f.properties&&f.properties.Nafa).map(f=>{
-      const nafa=(f.properties?.Nafa||'').trim();
-      const areaEn=getNafaEnglishFromProps(f.properties);
+    let features=[];
+    let offset=0;
+    let done=false;
+    while(!done){
+      const pagedUrl=`${baseUrl}&resultOffset=${offset}&resultRecordCount=${pageSize}`;
+      const r=await fetch(pagedUrl);
+      if(!r.ok)throw new Error(`HTTP ${r.status}`);
+      const gj=await r.json();
+      const pageFeatures=gj.features||[];
+      features=features.concat(pageFeatures);
+      if(pageFeatures.length<pageSize)done=true;
+      else offset+=pageSize;
+    }
+
+    officialNafotFeats=features.map(f=>{
+      const props=f.properties||{};
+      const nafa=getRegionDisplayName(props);
+      const areaEn=String(props?.REG_NAME ?? '').trim() || getNafaEnglishFromProps(props);
       if(nafa&&areaEn)nafaEnByHe[nafa]=areaEn;
       return {
         ...f,
-        properties:{...(f.properties||{}),_custom:false,_nafa_en:areaEn||undefined},
+        properties:{
+          ...props,
+          Nafa:nafa,
+          _region_name:String(props?.REG_NAME ?? '').trim(),
+          _region_label:String(props?.Lebel ?? '').trim(),
+          _custom:false,
+          _nafa_en:areaEn||undefined,
+        },
       };
     });
     rebuildNafotCollection();
+    console.info('Loaded geo_regions_porat regions:',officialNafotFeats.length,officialNafotFeats.map(f=>f.properties.Nafa));
   }catch(e){
-    console.warn('Nafot load failed:',e);
+    console.warn('Failed to load geo_regions_porat regions:',e);
     officialNafotFeats=[];
     rebuildNafotCollection();
   }
@@ -1040,10 +1073,19 @@ function renderNafotOnMap(visible){
     onEachFeature:(feat,layer)=>{
       const isCustom=!!feat.properties?._custom;
       const name=feat.properties.Nafa||'';
+      const regionName=String(feat.properties?._region_name||'').trim();
+      const regionLabel=String(feat.properties?._region_label||'').trim();
       layer.bindTooltip(nafaLabel(name)+(isCustom?' ✏':''),{
         permanent:true,direction:'center',
         className:'nafa-zone-label'+(isCustom?' nafa-zone-label-custom':''),
       });
+      if(!isCustom){
+        const popupLines=[];
+        popupLines.push(`<div style="font-weight:700">${nafaLabel(name)}</div>`);
+        if(regionLabel&&regionLabel!==name)popupLines.push(`<div>${regionLabel}</div>`);
+        if(regionName&&regionName!==regionLabel&&regionName!==name)popupLines.push(`<div>${regionName}</div>`);
+        layer.bindPopup(`<div style="min-width:140px">${popupLines.join('')}</div>`);
+      }
       if(isCustom){
         const cid=feat.properties._cid;
         layer.on('mouseover',()=>layer.setStyle(customHoverStyle));
@@ -1052,7 +1094,7 @@ function renderNafotOnMap(visible){
           L.DomEvent.stopPropagation(e);
           const dlLabel='Download GeoJSON';
           const delLabel='Delete';
-          const confirmMsg='Delete district "'+name+'"?';
+          const confirmMsg='Delete region "'+name+'"?';
           const uid='_cp_'+cid.replace(/[^a-z0-9]/gi,'_');
           const popHtml=
             '<div style="min-width:155px">'+
@@ -1610,7 +1652,7 @@ function renderDistrictsTab(){
 
   el.innerHTML=`<table class="dist-table">
     <thead><tr>
-      <th>${lh('נפה','District')}</th>
+      <th>${lh('מרחב','Region')}</th>
       <th title="Orchard Fruit Trees">Orchard</th>
       <th title="Non-Orchard Trees">Non-Orchard</th>
       <th title="Agricultural Installations">Agricultural</th>
@@ -1652,7 +1694,7 @@ function renderDistrictsTab(){
         {lk:'vegetation',feats:(allFeats.vegetation||[]).filter(f=>(f.properties._nafa||'לא ידוע')===nafa),color:LAYER_META.vegetation.color},
         {lk:'agtools',feats:(allFeats.agtools||[]).filter(f=>(f.properties._nafa||'לא ידוע')===nafa),color:LAYER_META.agtools.color},
         {lk:'terraces',feats:(allFeats.terraces||[]).filter(f=>(f.properties._nafa||'לא ידוע')===nafa),color:LAYER_META.agtools.color},
-      ],lh('מפה: נפה '+nafa,'Map: district '+nafaLabel(nafa)));
+      ],lh('מפה: מרחב '+nafa,'Map: region '+nafaLabel(nafa)));
       showDistrictDetail(nafa);
     });
   });
@@ -1677,7 +1719,7 @@ function renderDistrictCharts(distMap,sorted){
       orientation:'h',
       marker:{color:colors[lk]},
     })),
-    layout(lh('פיזור אובייקטים לפי נפה','Objects by District'),lh('כמות','Count'),'',{barmode:'stack'}),
+    layout(lh('פיזור אובייקטים לפי מרחב','Objects by Region'),lh('כמות','Count'),'',{barmode:'stack'}),
     cfgPlot()
   );
 
@@ -1706,7 +1748,7 @@ function renderDistrictCharts(distMap,sorted){
       y:nafotForChart.map(nafaLabel),
       colorscale:'YlGn',
       showscale:true,
-    }],layout(lh('מין עץ פרי × נפה (heatmap)','Orchard Fruit Tree × District (Heatmap)'),lh('מין','Orchard Fruit Tree'),lh('נפה','District')),cfgPlot());
+    }],layout(lh('מין עץ פרי × מרחב (heatmap)','Orchard Fruit Tree × Region (Heatmap)'),lh('מין','Orchard Fruit Tree'),lh('מרחב','Region')),cfgPlot());
   }
 
   /* Chart 3: Pie – total fruit trees per district (top 10) */
@@ -1718,7 +1760,7 @@ function renderDistrictCharts(distMap,sorted){
     textinfo:'label+percent',
     hole:0.3,
     marker:{colors:TYPE_COLORS.slice(0,10)},
-  }],{title:{text:lh('עצי פרי לפי נפה','Orchard Fruit Trees by District'),font:{size:13}},margin:{t:36,b:4,l:4,r:4},paper_bgcolor:'transparent'},cfgPlot());
+  }],{title:{text:lh('עצי פרי לפי מרחב','Orchard Fruit Trees by Region'),font:{size:13}},margin:{t:36,b:4,l:4,r:4},paper_bgcolor:'transparent'},cfgPlot());
 }
 
 /* ── District detail (reactive, with group filter + species drill-down) ── */
@@ -1730,7 +1772,7 @@ function showDistrictDetail(nafa){
   const el=document.getElementById('districtDetail');
   if(!el)return;
   el.style.display='block';
-  document.getElementById('districtDetailTitle').textContent=lh('נפה: ','District: ')+nafaLabel(nafa);
+  document.getElementById('districtDetailTitle').textContent=lh('מרחב: ','Region: ')+nafaLabel(nafa);
   /* Wire group buttons + close buttons once per element */
   if(!el._grpEvInit){
     el._grpEvInit=true;
@@ -1942,7 +1984,7 @@ function _populateSpeciesCmpSels(){
   if(dSel){
     const prev=dSel.value||'';
     const districts=[...new Set(nafotFeats.map(f=>f.properties?.Nafa).filter(Boolean).filter(n=>n!=='לא ידוע'))].sort();
-    dSel.innerHTML=`<option value="">All districts</option>`+districts.map(n=>`<option value="${n}">${nafaLabel(n)}</option>`).join('');
+    dSel.innerHTML=`<option value="">${t('all_regions')}</option>`+districts.map(n=>`<option value="${n}">${nafaLabel(n)}</option>`).join('');
     dSel.value=districts.includes(prev)?prev:'';
   }
 }
@@ -1959,7 +2001,7 @@ function runSpeciesComparison(){
   const featsA=itemsA.map(x=>x.feat);
   const featsB=itemsB.map(x=>x.feat);
   if(!featsA.length||!featsB.length){
-    document.getElementById('speciesCmpResult').innerHTML=`<div class="small">No data for selected district filter.</div>`;
+    document.getElementById('speciesCmpResult').innerHTML=`<div class="small">No data for selected region filter.</div>`;
     ['chartSpeciesCmpBox','chartSpeciesCmpBar'].forEach(id=>{try{Plotly.purge(id);}catch(e){} const el=document.getElementById(id); if(el)el.innerHTML='';});
     return;
   }
@@ -2729,7 +2771,7 @@ function applyLang(){
   setTxt('speciesCmpDistrictLbl',t('district_opt'));
   setTxt('btnRunSpeciesCmp',t('compare_btn'));
   const spDist=document.getElementById('speciesCmpDistrict');
-  if(spDist&&spDist.options.length){spDist.options[0].textContent='All districts';}
+  if(spDist&&spDist.options.length){spDist.options[0].textContent=t('all_regions');}
 
   setTxt('analyticsLblGroup',t('filter_group'));
   setTxt('analyticsLblSpecies',t('filter_species_ac'));
