@@ -193,9 +193,30 @@
 
     <div class="context-discovery-note" id="contextDiscoveryNote"></div>
 
+    <div id="contextGlobalControls" class="context-global-controls">
+      <button id="btnShowEssentialLayers" type="button">Show physical soil layer</button>
+      <button id="btnHideAllContextLayers" type="button">Hide all context layers</button>
+      <span class="context-attr-mode-wrap">
+        <label id="contextAttrModeLabel" for="contextAttrMode">Attribute details</label>
+        <select id="contextAttrMode">
+          <option value="summary" selected>Summary</option>
+          <option value="full">Full</option>
+        </select>
+      </span>
+      <label class="context-advanced-toggle" for="contextShowAdvanced">
+        <input type="checkbox" id="contextShowAdvanced">
+        <span id="contextShowAdvancedLabel">Show advanced source layers</span>
+      </label>
+    </div>
+
     <div id="sectionPhysical" class="context-layer-section" style="display:none">
-      <div class="context-layer-section-header">Active Context Layers</div>
+      <div class="context-layer-section-header">Physical environment / Soil type</div>
       <div id="contextLayersPanelList" class="context-layer-grid"></div>
+    </div>
+
+    <div id="sectionAdvanced" class="context-layer-section is-advanced" style="display:none">
+      <div class="context-layer-section-header">Advanced source layers</div>
+      <div id="contextAdvancedPanelList" class="context-layer-grid"></div>
     </div>
 
     <div id="contextLayerDetails" class="context-profile-panel">
@@ -203,6 +224,14 @@
         <h4 id="contextLayerDetailsTitle">Environmental profile</h4>
       </div>
       <div id="contextLayerDetailsBody" class="context-details-empty">Click a contextual layer feature on the map to inspect its attributes here.</div>
+    </div>
+
+    <div id="areaProfilePanel" class="area-profile-panel" style="display:none">
+      <div class="context-profile-header">
+        <h4>Area profile</h4>
+        <button id="btnClearAreaProfile" type="button">Clear area</button>
+      </div>
+      <div id="areaProfileBody" class="area-profile-body">Draw a polygon on the map to generate an area profile.</div>
     </div>
   </div>
 
