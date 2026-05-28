@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Research Dashboard – Ancient Orchards in the Land of Israel – Version 4 Experimental</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<link rel="stylesheet" href="style.css?v=20260524r2" />
+<link rel="stylesheet" href="style_v4.css?v=20260528r1" />
+</head>
+<body>
+<div id="app">
+<header>
+  <div class="header-title-group">
+    <img class="header-project-logo" src="src/assets/logos/bostan-tree.png" alt="BOSTAN-TREE" />
+    <span id="hdrTitle">Research Dashboard &mdash; Ancient Orchards in the Land of Israel <small style="font-size:0.7em;opacity:0.75">(v4 experimental)</small></span>
+  </div>
+  <div class="header-actions">
+    <span class="status" id="statusText">Loading data...</span>
+  </div>
+</header>
+<main>
+<div id="mapWrap">
+  <div id="map"></div>
+  <div id="contextWarningStack" class="context-warning-stack" aria-live="polite"></div>
+  <div class="float" id="floatPanel">
+    <div class="float-header">
+      <h4 id="floatTitle">Layers &amp; Map</h4>
+      <button id="btnFloatToggle" class="float-toggle collapsed" title="Collapse / Expand" aria-expanded="false">▲</button>
+    </div>
+    <div id="floatBody" class="collapsed">
+    <select id="basemapSel">
+      <optgroup label="Base Maps" id="bmGroupBase" data-label-he="מפות בסיס" data-label-en="Base Maps">
+        <option value="osm">OSM Modern</option>
+        <option value="sat" selected>Satellite (Esri)</option>
+      </optgroup>
+      <optgroup label="Palestine Open Maps">
+        <option value="pal20k">POM 1:20k (1940s)</option>
+        <option value="pal-1940s">POM Combined (1940s)</option>
+        <option value="pal100k">POM 1:100k (1950s)</option>
+        <option value="pal250k">POM 1:250k (1946)</option>
+        <option value="pal63k">POM 1:63k PEF (1880)</option>
+        <option value="isr250k">Israel 1:250k (1951)</option>
+      </optgroup>
+      <optgroup label="Blends" id="bmGroupMix" data-label-he="שילובים" data-label-en="Blends">
+        <option value="osm+pal20k">OSM + POM 1:20k</option>
+        <option value="osm+pal-1940s">OSM + POM 1940s</option>
+        <option value="osm+pal100k">OSM + POM 1:100k</option>
+        <option value="osm+pal250k">OSM + POM 1:250k</option>
+        <option value="osm+pal63k">OSM + POM 1:63k PEF</option>
+        <option value="osm+isr250k">OSM + Israel 1:250k</option>
+      </optgroup>
+    </select>
+    <div id="layerToggles"></div>
+    <div class="row">
+      <button id="btnShowAll">Show all</button>
+      <button id="btnFit">Zoom to data</button>
+    </div>
+    <input type="text" id="searchObj" placeholder="Search name / type..." style="margin-top:6px" />
+    <div class="row" style="margin-top:4px">
+      <button id="btnClearSel">Clear selection</button>
+      <button id="btnExportCSV">Export CSV</button>
+    </div>
+    <div id="updateStatus" class="small mt8" style="color:var(--text2)"></div>
+    <div class="small mt8" id="coordsLabel">WGS84 Coordinates</div>
+    </div>
+  </div>
+</div>
+
+<div id="sideResizeHandle" role="separator" aria-orientation="vertical" aria-label="Resize sidebar"></div>
+
+<div id="side">
+  <div class="tabs" id="tabsBar">
+    <button class="tabbtn active" data-tab="overview" id="tabOverview">Overview</button>
+    <button class="tabbtn" data-tab="bustans" id="tabBustans">Historical Orchard</button>
+    <button class="tabbtn" data-tab="districts" id="tabDistricts">Geographic Regions</button>
+    <button class="tabbtn" data-tab="species" id="tabSpecies">Orchard Fruit Trees</button>
+    <button class="tabbtn" data-tab="contextLayers" id="tabContextLayers">Context Layers</button>
+    <button class="tabbtn" data-tab="analytics" id="tabAnalytics">Analytics</button>
+    <button class="tabbtn" data-tab="advanced" id="tabAdvanced">Advanced</button>
+    <button class="tabbtn" data-tab="compare" id="tabCompare">Compare</button>
+  </div>
+
+  <div class="panel tab active" id="overview">
+    <div class="kpis">
+      <div class="kpi"><div class="label" id="kLbl1">Orchard Fruit Trees</div><div class="v" id="kFruitTrees"></div></div>
+      <div class="kpi"><div class="label" id="kLbl2">Non-Orchard Trees</div><div class="v" id="kCarobTrees"></div></div>
+      <div class="kpi"><div class="label" id="kLbl3">Geographic Regions</div><div class="v" id="kNafot"></div></div>
+      <div class="kpi"><div class="label" id="kLbl4">Agricultural Installations</div><div class="v" id="kVegetation"></div></div>
+      <div class="kpi"><div class="label" id="kLbl5">Non-Orchard / Wild Tree Records</div><div class="v" id="kAgTools"></div></div>
+      <div class="kpi"><div class="label" id="kLbl6">Terraces (source layer)</div><div class="v" id="kTerraces"></div></div>
+      <div class="kpi"><div class="label" id="kLbl7">Avg. Height (Orchard Fruit Trees)</div><div class="v" id="kAvgH"></div></div>
+      <div class="kpi"><div class="label" id="kLbl8">Avg. Girth (Orchard Fruit Trees)</div><div class="v" id="kAvgG"></div></div>
+      <div class="kpi"><div class="label" id="kLbl9">Orchard Fruit Tree Types</div><div class="v" id="kFruitTypes"></div></div>
+    </div>
+    <div id="selectionDetail"></div>
+    <div id="chartOverviewBar" class="chart"></div>
+    <div id="chartOverviewPie" class="chart"></div>
+  </div>
+
+  <div class="panel tab" id="districts">
+    <div class="small mb8" id="districtsIntro">Object counts by geographic regions from geo_regions_porat. Click a row to focus the map.</div>
+    <div id="districtList" style="overflow-y:auto;max-height:280px"></div>
+    <div class="small mt8" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <span id="districtsAddHint">Add polygon:</span>
+      <a href="#" id="btnAddDistrictPolygon">Click here to draw a new area</a>
+      <button id="btnExportDistrictsJSON" class="btn-inline-mini">Save JSON</button>
+      <button id="btnImportDistrictsJSON" class="btn-inline-mini">Load JSON</button>
+      <input type="file" id="districtsJsonFile" accept="application/json,.json" style="display:none" />
+    </div>
+    <div id="chartDistrictStack" class="chartTall"></div>
+    <div id="chartDistrictHeatmap" class="chartTall"></div>
+    <div id="chartDistrictPie" class="chart"></div>
+    <div id="districtDetail" style="display:none;margin-top:16px;border-top:2px solid var(--primary);padding-top:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <h5 id="districtDetailTitle" style="color:var(--primary);margin:0"></h5>
+        <button id="districtDetailClose" style="font-size:12px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:#fff">✕</button>
+      </div>
+      <div class="grp-btn-bar">
+        <button class="grp-btn active" data-grp="" id="distGrpAll">All</button>
+        <button class="grp-btn" data-grp="fruit" id="distGrpFruit">Orchard Fruit Trees</button>
+        <button class="grp-btn" data-grp="carob" id="distGrpCarob">Optional Source Layer</button>
+        <button class="grp-btn" data-grp="vegetation" id="distGrpVegetation">Non-Orchard Trees</button>
+      </div>
+      <div class="small mb8" id="districtDrillHint">Click an orchard fruit tree name for detailed analysis</div>
+      <div id="districtSpeciesTable" style="overflow-x:auto;overflow-y:auto;max-height:240px"></div>
+      <div id="chartDistrictSpeciesBar" class="chartTall"></div>
+      <div id="chartDistrictSpeciesBox" class="chartTall"></div>
+      <div id="districtSpeciesDetailPanel" style="display:none;margin-top:12px;border-top:1px solid var(--border);padding-top:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <h6 id="districtSpeciesDetailTitle" style="color:var(--primary);margin:0;font-size:13px"></h6>
+          <button id="districtSpeciesDetailClose" style="font-size:12px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:#fff">✕</button>
+        </div>
+        <div id="chartDistrictSpeciesHist" class="chart"></div>
+        <div id="chartDistrictSpeciesGirth" class="chart"></div>
+        <div id="chartDistrictSpeciesStatus" class="chart"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel tab" id="species">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+      <select id="speciesFilterLayer" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px">
+        <option value="" id="speciesGroupAll">All Groups</option>
+        <option value="fruit" id="speciesGroupFruit">Orchard Fruit Trees</option>
+        <option value="carob" id="speciesGroupCarob">Non-Orchard / Wild Tree Records</option>
+        <option value="vegetation" id="speciesGroupVegetation">Non-Orchard Trees</option>
+      </select>
+      <input type="text" id="speciesSearch" placeholder="Search orchard fruit tree..." style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px" />
+    </div>
+    <div class="small mb8" id="speciesCount"></div>
+    <div id="speciesTable" style="overflow-x:auto;overflow-y:auto;max-height:280px"></div>
+    <button id="btnOpenSpeciesCmp" style="padding:6px 14px;border:1px solid var(--primary);border-radius:8px;background:#fff;color:var(--primary);cursor:pointer;font-size:12px;font-weight:600;margin-bottom:8px">Orchard Fruit Tree Comparison ▾</button>
+    <div id="speciesCmpPanel" style="display:none;background:#f8fafc;border:1px solid var(--primary);border-radius:10px;padding:14px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <h5 style="margin:0;color:var(--primary);font-size:13px" id="speciesCmpTitle">Orchard Fruit Tree Comparison</h5>
+        <button id="btnSpeciesCmpClose" style="font-size:12px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:#fff">✕</button>
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:8px">
+        <div style="flex:1"><div class="small" style="margin-bottom:3px" id="speciesCmpLblA">Orchard Fruit Tree A</div><select id="speciesCmpA" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:8px;font-size:12px"></select></div>
+        <div style="flex:1"><div class="small" style="margin-bottom:3px" id="speciesCmpLblB">Orchard Fruit Tree B</div><select id="speciesCmpB" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:8px;font-size:12px"></select></div>
+        <div style="flex:1"><div class="small" style="margin-bottom:3px" id="speciesCmpDistrictLbl">Region</div><select id="speciesCmpDistrict" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:8px;font-size:12px"><option value="">All regions</option></select></div>
+        <button id="btnRunSpeciesCmp" style="padding:7px 16px;background:var(--primary);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:12px">Compare</button>
+      </div>
+      <div id="speciesCmpResult"></div>
+      <div id="chartSpeciesCmpBox" class="chartTall"></div>
+      <div id="chartSpeciesCmpBar" class="chart"></div>
+    </div>
+    <div id="speciesDetail" style="display:none;margin-top:12px;border-top:2px solid var(--border);padding-top:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h5 id="speciesDetailTitle" style="color:var(--primary);margin:0;font-size:14px"></h5>
+        <button id="speciesDetailClose" style="font-size:12px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:#fff">✕</button>
+      </div>
+      <div id="speciesDetailStats"></div>
+      <div id="chartSpeciesHeightHist" class="chart"></div>
+      <div id="chartSpeciesGirthHist" class="chart"></div>
+      <div id="chartSpeciesStatus" class="chart"></div>
+      <div id="chartSpeciesNafot" class="chartTall"></div>
+      <div id="chartSpeciesBoxNafot" class="chartTall"></div>
+    </div>
+  </div>
+
+  <div class="panel tab" id="contextLayers">
+    <div class="context-panel-intro">
+      <h3>Context Layers</h3>
+      <p id="contextLayersIntro">These optional layers provide environmental and geographic context for interpreting heritage orchards. They are loaded only when enabled.</p>
+    </div>
+    <div id="contextLayersPanelList" class="context-layer-grid"></div>
+    <div id="contextLayerDetails" class="context-details-panel">
+      <div class="context-details-header">
+        <h4 id="contextLayerDetailsTitle">Context layer details</h4>
+      </div>
+      <div id="contextLayerDetailsBody" class="context-details-empty">Click a contextual layer feature on the map to inspect its attributes here.</div>
+    </div>
+  </div>
+
+  <div class="panel tab" id="analytics">
+    <div class="analytics-filter-bar">
+      <div><label id="analyticsLblGroup">Group</label>
+        <select id="analyticsFilterGroup">
+          <option value="" id="analyticsGroupAll">All Groups</option>
+          <option value="fruit" id="analyticsGroupFruit">Orchard Fruit Trees</option>
+          <option value="carob" id="analyticsGroupCarob">Non-Orchard / Wild Tree Records</option>
+          <option value="vegetation" id="analyticsGroupVegetation">Non-Orchard Trees</option>
+        </select>
+      </div>
+      <div style="flex:2"><label id="analyticsLblSpecies">Specific Orchard Fruit Tree (Autocomplete)</label>
+        <input type="text" id="analyticsFilterSpecies" list="analyticsSpeciesList" placeholder="Type orchard fruit tree..." style="width:100%;box-sizing:border-box" />
+        <datalist id="analyticsSpeciesList"></datalist>
+      </div>
+      <div style="flex:2"><label id="analyticsLblDistricts">Regions (Ctrl for multi-select)</label>
+        <select id="analyticsFilterNafa" multiple size="4" style="width:100%"></select>
+      </div>
+      <button id="btnAnalyticsApply" class="btn-apply">Apply</button>
+      <button id="btnAnalyticsReset" class="btn-reset">Reset</button>
+    </div>
+    <div id="analyticsFilterStatus"></div>
+    <div id="chartTypeDist" class="chartTall"></div>
+    <div id="chartHeightDist" class="chart"></div>
+    <div id="chartGirthDist" class="chart"></div>
+    <div id="chartHeightBox" class="chartTall"></div>
+    <div id="chartStatusDist" class="chart"></div>
+    <div id="chartHeatLayer" class="chartTall"></div>
+    <div id="chartScatterHG" class="chartTall"></div>
+    <div id="chartViolinH" class="chartTall"></div>
+  </div>
+
+  <div class="panel tab" id="advanced">
+    <div class="small mb8" id="advancedIntro">Advanced analysis: CDF, Lorenz, correlations, spatial distribution</div>
+    <div id="chartCDF" class="chartTall"></div>
+    <div id="chartLorenz" class="chartTall"></div>
+    <div id="chartBustanProfile" class="chartWide"></div>
+    <div id="chartCorrelation" class="chartTall"></div>
+    <div id="chartTypeByBustan" class="chartTall"></div>
+    <div id="chartSizeClass" class="chartTall"></div>
+    <div id="chartTreemapTypes" class="chartTall"></div>
+    <div id="chartRadarStatus" class="chartTall"></div>
+  </div>
+
+  <div class="panel tab" id="compare">
+    <div class="small mb8" id="compareIntro">Choose two units to compare: tree type, layer, region</div>
+    <div class="cmp-row">
+      <div class="cmp-side">
+        <label class="small" id="labelSideA">Side A &ndash; Type</label>
+        <select id="cmpTypeA">
+          <option value="treetype" id="cmpTypeATree">Tree Type</option>
+          <option value="layer" id="cmpTypeALayer">Layer</option>
+          <option value="district" id="cmpTypeADistrict">Region</option>
+        </select>
+        <select id="cmpSelA"></select>
+        <label class="small" id="cmpSpacesLabelA">Spaces (optional)</label>
+        <select id="cmpSpacesA" multiple size="4"></select>
+      </div>
+      <div class="cmp-side">
+        <label class="small" id="labelSideB">Side B &ndash; Type</label>
+        <select id="cmpTypeB">
+          <option value="treetype" id="cmpTypeBTree">Tree Type</option>
+          <option value="layer" id="cmpTypeBLayer">Layer</option>
+          <option value="district" id="cmpTypeBDistrict">Region</option>
+        </select>
+        <select id="cmpSelB"></select>
+        <label class="small" id="cmpSpacesLabelB">Spaces (optional)</label>
+        <select id="cmpSpacesB" multiple size="4"></select>
+      </div>
+    </div>
+    <button id="btnCompare" class="mt8">Compare</button>
+    <div id="cmpResult" class="mt8"></div>
+    <div id="cmpChartBar" class="chartTall"></div>
+    <div id="cmpChartRadar" class="chartTall"></div>
+    <div id="cmpChartBox" class="chartTall"></div>
+    <div id="cmpChartHist" class="chartTall"></div>
+    <div id="cmpChartScatter" class="chartTall"></div>
+  </div>
+
+  <div class="panel tab" id="bustans">
+    <div class="small mb8" id="bustansIntro">List of Historical Orchard records — click a record to view details on the map</div>
+    <input type="text" id="bustanSearch" placeholder="Search historical orchard..." style="width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;margin-bottom:8px;box-sizing:border-box" />
+    <div id="bustansList" style="overflow-y:auto;max-height:260px;border:1px solid var(--border);border-radius:8px"></div>
+    <div id="bustanDetail" style="display:none;margin-top:14px;border-top:2px solid var(--primary);padding-top:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <h5 id="bustanDetailTitle" style="color:var(--primary);margin:0;font-size:14px"></h5>
+        <button id="bustanDetailClose" style="font-size:12px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:#fff">✕</button>
+      </div>
+      <div id="bustanZonesTable"></div>
+      <div id="chartBustanZones" class="chartTall"></div>
+    </div>
+  </div>
+</div>
+</main>
+
+<footer class="branding-footer" aria-label="Institutional branding">
+  <div class="branding-footer-inner">
+    <div class="branding-logos">
+      <img class="branding-logo branding-logo-haifa" src="src/assets/logos/Haifa uni logo.svg" alt="University of Haifa" />
+      <img class="branding-logo branding-logo-erc" src="src/assets/logos/ERC logo.svg" alt="European Research Council / European Union" />
+    </div>
+    <div class="branding-meta">
+      <span class="branding-text">University of Haifa &middot; European Research Council</span>
+      <button id="btnCredits" type="button" class="branding-credits-btn" aria-haspopup="dialog" aria-controls="creditsDialog">About</button>
+    </div>
+  </div>
+</footer>
+</div>
+
+<div id="objModal" style="display:none;position:fixed;inset:0;z-index:3000;background:rgba(15,23,42,.6)">
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-width:560px;width:92%;max-height:85vh;overflow-y:auto;padding:20px">
+    <button id="objModalClose" style="position:absolute;top:10px;left:12px;background:#e2e8f0;border:none;border-radius:8px;width:32px;height:32px;font-size:20px;cursor:pointer;line-height:1">&times;</button>
+    <div id="objModalContent"></div>
+    <div id="objModalImages"></div>
+  </div>
+</div>
+
+<div id="photoPopup" class="popup-overlay">
+  <img id="photoPopupImg" src="" alt="" style="max-width:90vw;max-height:90vh;border-radius:12px;box-shadow:0 25px 70px rgba(0,0,0,.4);z-index:3001">
+</div>
+
+<div id="creditsDialog" class="credits-overlay" aria-hidden="true">
+  <div class="credits-modal" role="dialog" aria-modal="true" aria-labelledby="creditsTitle">
+    <button id="creditsClose" type="button" class="credits-close" aria-label="Close credits">&times;</button>
+    <h2 id="creditsTitle" class="credits-title">About</h2>
+    <div class="credits-logo-grid">
+      <img class="credits-logo credits-logo-erc" src="src/assets/logos/ERC with text.svg" alt="European Research Council / European Union" />
+      <img class="credits-logo credits-logo-bostan" src="src/assets/logos/BOSTAN TREE logo.svg" alt="BOSTAN TREE" />
+      <img class="credits-logo credits-logo-haifa" src="src/assets/logos/Haifa uni with text.svg" alt="University of Haifa" />
+    </div>
+    <div class="credits-lines">
+      <p class="credits-heading"><strong>Ancient Trees, Living Landscapes</strong></p>
+      <p class="credits-subheading"><strong>Mapping Israel’s Heritage Orchards</strong></p>
+      <p>Ancient orchards and heritage fruit trees are living witnesses to the agricultural and cultural history of the Eastern Mediterranean. Many of these landscapes are rapidly disappearing due to urban development, climate change, and the loss of traditional farming systems.</p>
+      <p>The <a href="https://www.bostantree.com/" target="_blank" rel="noopener noreferrer">BOSTAN TREE</a> project combines archaeology, genetics, history, and GIS mapping to document and preserve heritage orchards and landrace fruit trees across Israel. Through interactive maps and spatial databases, visitors can explore the distribution of heritage trees, historical orchards, and the agricultural landscapes that shaped them.</p>
+      <p>Many of these heritage varieties show remarkable resilience to drought and environmental stress, making them important resources for climate adaptation and the future of sustainable agriculture.</p>
+      <p>This platform serves as a gateway to the evolving landscape of heritage orchard research and preservation.</p>
+    </div>
+  </div>
+</div>
+
+<script src="app_v3.js?v=20260525r1"></script>
+<script src="app_v4.js?v=20260528r1"></script>
+</body>
+</html>
