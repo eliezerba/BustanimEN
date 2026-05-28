@@ -185,14 +185,22 @@
   </div>
 
   <div class="panel tab" id="contextLayers">
-    <div class="context-panel-intro">
-      <h3>Context Layers</h3>
-      <p id="contextLayersIntro">These optional layers provide environmental and geographic context for interpreting heritage orchards. They are loaded only when enabled.</p>
+    <div class="environmental-context-header">
+      <h3 id="envContextTitle">Environmental Context</h3>
+      <p id="contextLayersIntro">Optional GIS layers that provide ecological, soil, climatic and land-cover context for interpreting heritage orchards. Layers are loaded lazily — only when enabled.</p>
+      <p class="env-context-subintro">Turn on a layer to see its colors directly on the map. Click any polygon/line for full details.</p>
     </div>
-    <div id="contextLayersPanelList" class="context-layer-grid"></div>
-    <div id="contextLayerDetails" class="context-details-panel">
-      <div class="context-details-header">
-        <h4 id="contextLayerDetailsTitle">Context layer details</h4>
+
+    <div class="context-discovery-note" id="contextDiscoveryNote"></div>
+
+    <div id="sectionPhysical" class="context-layer-section" style="display:none">
+      <div class="context-layer-section-header">Active Context Layers</div>
+      <div id="contextLayersPanelList" class="context-layer-grid"></div>
+    </div>
+
+    <div id="contextLayerDetails" class="context-profile-panel">
+      <div class="context-profile-header">
+        <h4 id="contextLayerDetailsTitle">Environmental profile</h4>
       </div>
       <div id="contextLayerDetailsBody" class="context-details-empty">Click a contextual layer feature on the map to inspect its attributes here.</div>
     </div>

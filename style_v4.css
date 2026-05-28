@@ -84,6 +84,7 @@ body.version4-experimental {
 
 .context-layer-card.is-active {
   border-color: rgba(14,116,144,.28);
+  box-shadow: 0 0 0 1px rgba(14,116,144,.16), var(--shadow);
 }
 
 .context-layer-head {
@@ -141,6 +142,15 @@ body.version4-experimental {
 .context-layer-control select,
 .context-layer-control input[type="range"] {
   width: 100%;
+}
+
+.context-layer-control select {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 8px;
+  background: #fff;
+  color: var(--text);
+  font-size: 12px;
 }
 
 .context-opacity-row {
@@ -314,6 +324,271 @@ body.version4-experimental {
   font-size: 12px;
   color: var(--text);
   font-weight: 600;
+}
+
+/* ============================================================
+   v4 Environmental Context – new UI components
+   ============================================================ */
+
+/* Environmental context header */
+.environmental-context-header {
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+.environmental-context-header h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary);
+}
+.env-context-subintro {
+  font-size: 12px;
+  color: var(--text2);
+  margin: 4px 0 0;
+}
+
+/* Mode cards */
+.context-mode-cards {
+  display: flex;
+  gap: 6px;
+  padding: 0 16px 10px;
+  flex-wrap: wrap;
+}
+.context-mode-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #f8fafc;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text2);
+  transition: background 0.15s, border-color 0.15s;
+}
+.context-mode-card:hover { background: #f1f5f9; }
+.context-mode-card.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.mode-icon { font-size: 14px; }
+.mode-label { font-size: 11px; }
+
+/* Global controls bar */
+.context-global-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 0 16px 10px;
+  font-size: 12px;
+}
+.context-global-controls button {
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.context-global-controls button:hover { background: #f1f5f9; }
+.context-attr-mode-wrap {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.context-attr-mode-wrap label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary);
+}
+.context-attr-mode-wrap select {
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 12px;
+}
+.context-advanced-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Layer sections */
+.context-layer-section {
+  padding: 0 16px 6px;
+}
+.context-layer-section-header {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text2);
+  padding: 8px 0 6px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.context-layer-section.is-advanced .context-layer-section-header {
+  color: #7c3aed;
+}
+
+/* Layer card extras */
+.context-layer-card.is-disabled {
+  opacity: 0.65;
+  background: #f8fafc;
+  cursor: not-allowed;
+}
+.context-layer-short-label {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text2);
+  background: #e2e8f0;
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+.context-layer-why {
+  font-size: 11px;
+  color: var(--text2);
+  margin: 3px 0 0;
+  line-height: 1.5;
+}
+
+/* Discovery status badge */
+.context-layer-discovery-status {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 2px 7px;
+  margin-top: 4px;
+  letter-spacing: 0.02em;
+}
+.context-layer-discovery-status.is-not-found {
+  background: #fef9c3;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+.context-layer-discovery-status.is-configured {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+/* Discovery note */
+.context-discovery-note {
+  font-size: 12px;
+  color: var(--text2);
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 14px;
+  margin: 0 16px 10px;
+}
+.note-muted { opacity: 0.65; }
+
+/* Profile panel */
+.context-profile-panel {
+  border-top: 2px solid var(--primary);
+  margin-top: 12px;
+  padding: 10px 16px 0;
+}
+.context-profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.context-profile-header h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0;
+}
+.environmental-profile-empty {
+  font-size: 12px;
+  color: var(--text2);
+  text-align: center;
+  padding: 18px 0;
+}
+.environmental-profile-section {
+  margin-bottom: 12px;
+}
+.env-profile-layer-name {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--primary);
+  margin-bottom: 5px;
+}
+.environmental-profile-grid {}
+.environmental-profile-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 12px;
+}
+.env-profile-label { color: var(--text2); }
+.env-profile-value { font-weight: 600; color: var(--text); }
+
+/* Area profile panel */
+.area-profile-panel {
+  border-top: 2px solid #7c3aed;
+  margin-top: 12px;
+  padding: 10px 16px 0;
+}
+.area-profile-body { padding-top: 8px; }
+.area-profile-loading {
+  font-size: 12px;
+  color: var(--text2);
+  padding: 10px 0;
+}
+.area-profile-section { margin-bottom: 14px; }
+.area-profile-layer-name {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #7c3aed;
+  margin-bottom: 3px;
+}
+.area-profile-summary {
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 4px;
+}
+.area-profile-distribution {}
+.area-profile-dist-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 12px;
+}
+.area-dist-label { color: var(--text); }
+.area-dist-count {
+  font-weight: 700;
+  color: var(--primary);
+  min-width: 32px;
+  text-align: right;
+}
+
+.leaflet-popup-content .context-popup-card {
+  min-width: 220px;
+  max-width: 320px;
   word-break: break-word;
 }
 
@@ -352,6 +627,101 @@ body.version4-experimental {
   font-size: 12px;
   font-weight: 600;
   word-break: break-word;
+}
+
+.context-map-legend {
+  background: rgba(255,255,255,.96);
+  border: 1px solid rgba(15,23,42,.16);
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(15,23,42,.18);
+  padding: 9px 10px;
+  min-width: 200px;
+  max-width: 280px;
+  max-height: 36vh;
+  overflow: auto;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.context-map-legend-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  margin-bottom: 6px;
+}
+
+.context-map-legend-empty {
+  color: var(--text2);
+  font-size: 11px;
+}
+
+.context-map-legend-layer {
+  border-top: 1px solid #e2e8f0;
+  margin-top: 6px;
+  padding-top: 6px;
+}
+
+.context-map-legend-layer:first-of-type {
+  border-top: none;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.context-map-legend-layer-title {
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.context-map-legend-layer-mode {
+  color: #64748b;
+  font-size: 10px;
+  margin-bottom: 4px;
+}
+
+.context-map-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+  color: #334155;
+}
+
+.context-map-legend-swatch {
+  width: 14px;
+  height: 10px;
+  border-radius: 3px;
+  border: 1px solid rgba(15,23,42,.22);
+  flex: 0 0 auto;
+}
+
+.context-map-legend-swatch.line {
+  height: 0;
+  border-radius: 0;
+  border-top-width: 2px;
+  border-top-style: solid;
+  border-right: none;
+  border-left: none;
+  border-bottom: none;
+  background: transparent;
+}
+
+.leaflet-pane.contextPolygonPane,
+.leaflet-pane.contextLinePane {
+  pointer-events: auto;
+}
+
+.leaflet-pane.contextPolygonPane path,
+.leaflet-pane.contextLinePane path,
+.leaflet-pane.contextPolygonPane .leaflet-interactive,
+.leaflet-pane.contextLinePane .leaflet-interactive {
+  pointer-events: auto;
+}
+
+.context-map-legend {
+  pointer-events: auto;
 }
 
 @media (max-width: 900px) {
