@@ -348,6 +348,7 @@ const TREE_TYPE_EN = {
   'חרוב':'Carob',         'אגס':'Pear',           'תפוח':'Apple',
   'שזיף':'Plum',          'אגוז':'Walnut',         'הדר':'Citrus',
   'שושן צחור':'Lilium candidum',
+  'שושן_צחור':'Lilium candidum',
   'אפרסק':'Peach',        'חבוש':'Quince',        'גויבה':'Guava',
   'צבר':'Prickly Pear',   'תות':'Mulberry',       'משמש':'Apricot',
   /* Non-fruit trees (layer 2) */
